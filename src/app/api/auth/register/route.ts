@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const { name, email, password } = parsed.data
 
     // Check if user exists
-    const existing = db.select().from(users).where(eq(users.email, email)).get()
+    const existing = await db.select().from(users).where(eq(users.email, email)).get()
     if (existing) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
     }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const passwordHash = hashSync(password, 12)
     const now = nowUtc()
 
-    db.insert(users)
+    await db.insert(users)
       .values({
         id: generateId(),
         name,
@@ -39,7 +39,6 @@ export async function POST(request: Request) {
         createdAt: now,
         updatedAt: now,
       })
-      .run()
 
     return NextResponse.json({ ok: true })
   } catch {

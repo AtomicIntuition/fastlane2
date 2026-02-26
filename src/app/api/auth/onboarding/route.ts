@@ -9,7 +9,6 @@ import { nowUtc } from '@/lib/utils/dates';
 
 export async function POST(request: Request) {
   try {
-    // 1. Require authentication
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -20,7 +19,6 @@ export async function POST(request: Request) {
 
     const userId = session.user.id;
 
-    // 2. Parse and validate request body
     const body = await request.json();
     const parsed = onboardingSchema.safeParse(body);
 
@@ -35,16 +33,14 @@ export async function POST(request: Request) {
     const notificationsEnabled = body.notificationsEnabled !== false ? 1 : 0;
     const now = nowUtc();
 
-    // 3. Check if profile already exists
-    const existing = db
+    const existing = await db
       .select()
       .from(userProfiles)
       .where(eq(userProfiles.userId, userId))
       .get();
 
     if (existing) {
-      // Update existing profile
-      db.update(userProfiles)
+      await db.update(userProfiles)
         .set({
           fastingGoal,
           experienceLevel,
@@ -54,11 +50,9 @@ export async function POST(request: Request) {
           onboardingCompleted: 1,
           updatedAt: now,
         })
-        .where(eq(userProfiles.userId, userId))
-        .run();
+        .where(eq(userProfiles.userId, userId));
     } else {
-      // Create new profile
-      db.insert(userProfiles)
+      await db.insert(userProfiles)
         .values({
           id: generateId(),
           userId,
@@ -70,8 +64,7 @@ export async function POST(request: Request) {
           onboardingCompleted: 1,
           createdAt: now,
           updatedAt: now,
-        })
-        .run();
+        });
     }
 
     return NextResponse.json({ ok: true });

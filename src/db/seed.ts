@@ -25,12 +25,12 @@ async function seed(): Promise<void> {
   console.log('[seed] Seeding database...');
 
   // Clean existing seed data so re-runs don't fail
-  const existing = db.select().from(users).where(eq(users.email, 'jane@example.com')).get();
+  const [existing] = await db.select().from(users).where(eq(users.email, 'jane@example.com'));
   if (existing) {
-    db.delete(dailyCheckins).where(eq(dailyCheckins.userId, existing.id)).run();
-    db.delete(fastingSessions).where(eq(fastingSessions.userId, existing.id)).run();
-    db.delete(userProfiles).where(eq(userProfiles.userId, existing.id)).run();
-    db.delete(users).where(eq(users.id, existing.id)).run();
+    await db.delete(dailyCheckins).where(eq(dailyCheckins.userId, existing.id));
+    await db.delete(fastingSessions).where(eq(fastingSessions.userId, existing.id));
+    await db.delete(userProfiles).where(eq(userProfiles.userId, existing.id));
+    await db.delete(users).where(eq(users.id, existing.id));
     console.log('[seed] Cleaned previous seed data');
   }
 
@@ -44,21 +44,21 @@ async function seed(): Promise<void> {
 
   const passwordHash = await hash('password123', 12);
 
-  db.insert(users).values({
+  await db.insert(users).values({
     id: userId,
     name: 'Jane Faster',
     email: 'jane@example.com',
     passwordHash,
     createdAt: now - 30 * DAY,
     updatedAt: now,
-  }).run();
+  });
 
   console.log('[seed] Created test user: jane@example.com / password123');
 
   // ------------------------------------------
   // User profile
   // ------------------------------------------
-  db.insert(userProfiles).values({
+  await db.insert(userProfiles).values({
     id: ulid(),
     userId,
     fastingGoal: 'health',
@@ -69,7 +69,7 @@ async function seed(): Promise<void> {
     onboardingCompleted: 1,
     createdAt: now - 30 * DAY,
     updatedAt: now,
-  }).run();
+  });
 
   console.log('[seed] Created user profile');
 
@@ -80,7 +80,7 @@ async function seed(): Promise<void> {
   const session1Start = now - 3 * DAY;
   const session1End = session1Start + 16 * HOUR;
 
-  db.insert(fastingSessions).values({
+  await db.insert(fastingSessions).values({
     id: session1Id,
     userId,
     protocol: '16:8',
@@ -88,17 +88,17 @@ async function seed(): Promise<void> {
     eatingHours: 8,
     startedAt: session1Start,
     targetEndAt: session1End,
-    actualEndAt: session1End + 30 * 60_000, // ended 30 min late
+    actualEndAt: session1End + 30 * 60_000,
     status: 'completed',
     notes: 'Felt great, was not too hungry.',
     createdAt: session1Start,
-  }).run();
+  });
 
   const session2Id = ulid();
   const session2Start = now - 2 * DAY;
   const session2End = session2Start + 18 * HOUR;
 
-  db.insert(fastingSessions).values({
+  await db.insert(fastingSessions).values({
     id: session2Id,
     userId,
     protocol: '18:6',
@@ -106,16 +106,16 @@ async function seed(): Promise<void> {
     eatingHours: 6,
     startedAt: session2Start,
     targetEndAt: session2End,
-    actualEndAt: session2End - 15 * 60_000, // ended 15 min early
+    actualEndAt: session2End - 15 * 60_000,
     status: 'completed',
     notes: 'Tried 18:6 for the first time. A bit challenging.',
     createdAt: session2Start,
-  }).run();
+  });
 
   const session3Id = ulid();
-  const session3Start = now - 6 * HOUR; // started 6 hours ago
+  const session3Start = now - 6 * HOUR;
 
-  db.insert(fastingSessions).values({
+  await db.insert(fastingSessions).values({
     id: session3Id,
     userId,
     protocol: '16:8',
@@ -127,14 +127,14 @@ async function seed(): Promise<void> {
     status: 'active',
     notes: null,
     createdAt: session3Start,
-  }).run();
+  });
 
   console.log('[seed] Created 3 fasting sessions (2 completed, 1 active)');
 
   // ------------------------------------------
   // Daily check-ins
   // ------------------------------------------
-  const checkins = [
+  await db.insert(dailyCheckins).values([
     {
       id: ulid(),
       userId,
@@ -179,17 +179,12 @@ async function seed(): Promise<void> {
       notes: null,
       createdAt: now,
     },
-  ];
-
-  for (const checkin of checkins) {
-    db.insert(dailyCheckins).values(checkin).run();
-  }
+  ]);
 
   console.log('[seed] Created 4 daily check-ins');
   console.log('[seed] Seeding complete!');
 }
 
-// Run the seed function.
 seed()
   .then(() => process.exit(0))
   .catch((error) => {

@@ -32,11 +32,11 @@ function extractSubscriptionId(invoice: Stripe.Invoice): string | null {
  * Look up the subscription record for a given Stripe subscription ID.
  */
 async function findBySubscriptionId(stripeSubscriptionId: string) {
-  return db
+  return (await db
     .select()
     .from(subscriptions)
     .where(eq(subscriptions.stripeSubscriptionId, stripeSubscriptionId))
-    .get()
+    .get()) ?? undefined
 }
 
 /* ================================================================== */

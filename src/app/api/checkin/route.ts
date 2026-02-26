@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     // Extract optional fastingSessionId from the request body
     const { fastingSessionId } = body as { fastingSessionId?: string }
 
-    db.insert(dailyCheckins)
+    await db.insert(dailyCheckins)
       .values({
         id,
         userId: session.user.id,
@@ -42,9 +42,8 @@ export async function POST(request: Request) {
         notes: parsed.data.notes ?? null,
         createdAt: now,
       })
-      .run()
 
-    const checkin = db
+    const checkin = await db
       .select()
       .from(dailyCheckins)
       .where(eq(dailyCheckins.id, id))

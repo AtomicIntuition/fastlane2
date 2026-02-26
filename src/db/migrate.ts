@@ -1,4 +1,4 @@
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { migrate } from 'drizzle-orm/libsql/migrator';
 import path from 'node:path';
 import { db } from './index';
 
@@ -13,23 +13,23 @@ import { db } from './index';
  *
  * Or imported and called programmatically during application startup.
  */
-export function runMigrations(): void {
+export async function runMigrations(): Promise<void> {
   const migrationsFolder = path.resolve(__dirname, 'migrations');
 
   console.log(`[migrate] Running migrations from ${migrationsFolder}`);
 
-  migrate(db, { migrationsFolder });
+  await migrate(db, { migrationsFolder });
 
   console.log('[migrate] All migrations applied successfully.');
 }
 
 // Allow running as a standalone script.
-if (require.main === module) {
-  try {
-    runMigrations();
-    process.exit(0);
-  } catch (error) {
-    console.error('[migrate] Migration failed:', error);
-    process.exit(1);
-  }
+const isMain = process.argv[1]?.includes('migrate');
+if (isMain) {
+  runMigrations()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error('[migrate] Migration failed:', error);
+      process.exit(1);
+    });
 }

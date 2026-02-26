@@ -68,7 +68,7 @@ export default async function StatsPage() {
   const now = nowUtc()
 
   /* ---- Fetch all sessions for the user ---- */
-  const allSessions = db
+  const allSessions = await db
     .select()
     .from(fastingSessions)
     .where(eq(fastingSessions.userId, userId))

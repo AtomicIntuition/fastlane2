@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    db.insert(analyticsEvents)
+    await db.insert(analyticsEvents)
       .values({
         id: generateId(),
         event,
@@ -21,7 +21,6 @@ export async function POST(request: Request) {
         sessionId: sessionId ?? null,
         timestamp,
       })
-      .run()
 
     return NextResponse.json({ ok: true })
   } catch {

@@ -6,8 +6,7 @@ import { nowUtc } from '@/lib/utils/dates'
 import { getProtocol } from './protocols'
 
 export async function startFast(userId: string, protocolId: string, customHours?: { fasting: number; eating: number }) {
-  // Check for active session
-  const active = db
+  const active = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.userId, userId), eq(fastingSessions.status, 'active')))
@@ -25,7 +24,7 @@ export async function startFast(userId: string, protocolId: string, customHours?
   const targetEnd = now + fastingHours * 60 * 60 * 1000
 
   const id = generateId()
-  db.insert(fastingSessions)
+  await db.insert(fastingSessions)
     .values({
       id,
       userId,
@@ -37,13 +36,12 @@ export async function startFast(userId: string, protocolId: string, customHours?
       status: 'active',
       createdAt: now,
     })
-    .run()
 
-  return db.select().from(fastingSessions).where(eq(fastingSessions.id, id)).get()!
+  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, id)).get())!
 }
 
 export async function completeFast(userId: string, sessionId: string) {
-  const session = db
+  const session = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
@@ -54,16 +52,15 @@ export async function completeFast(userId: string, sessionId: string) {
 
   const now = nowUtc()
 
-  db.update(fastingSessions)
+  await db.update(fastingSessions)
     .set({ status: 'completed', actualEndAt: now })
     .where(eq(fastingSessions.id, sessionId))
-    .run()
 
-  return db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get()!
+  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
 }
 
 export async function cancelFast(userId: string, sessionId: string) {
-  const session = db
+  const session = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
@@ -74,20 +71,19 @@ export async function cancelFast(userId: string, sessionId: string) {
 
   const now = nowUtc()
 
-  db.update(fastingSessions)
+  await db.update(fastingSessions)
     .set({ status: 'cancelled', actualEndAt: now })
     .where(eq(fastingSessions.id, sessionId))
-    .run()
 
-  return db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get()!
+  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
 }
 
 export async function getActiveSession(userId: string) {
-  return db
+  return (await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.userId, userId), eq(fastingSessions.status, 'active')))
-    .get() ?? null
+    .get()) ?? null
 }
 
 export async function getSessionHistory(userId: string, limit = 50, offset = 0) {
@@ -102,7 +98,7 @@ export async function getSessionHistory(userId: string, limit = 50, offset = 0) 
 }
 
 export async function extendFast(userId: string, sessionId: string, additionalHours: number) {
-  const session = db
+  const session = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
@@ -113,13 +109,12 @@ export async function extendFast(userId: string, sessionId: string, additionalHo
 
   const newTarget = session.targetEndAt + additionalHours * 60 * 60 * 1000
 
-  db.update(fastingSessions)
+  await db.update(fastingSessions)
     .set({
       targetEndAt: newTarget,
       fastingHours: session.fastingHours + additionalHours,
     })
     .where(eq(fastingSessions.id, sessionId))
-    .run()
 
-  return db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get()!
+  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
 }
