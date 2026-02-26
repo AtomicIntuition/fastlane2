@@ -4,11 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
   Timer,
   CalendarDays,
-  BarChart3,
-  Settings,
+  TrendingUp,
+  User,
   Sparkles,
   X,
   type LucideIcon,
@@ -29,11 +28,10 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Timer', href: '/timer', icon: Timer },
   { label: 'History', href: '/history', icon: CalendarDays },
-  { label: 'Stats', href: '/stats', icon: BarChart3 },
-  { label: 'Settings', href: '/settings', icon: Settings },
+  { label: 'Insights', href: '/stats', icon: TrendingUp },
+  { label: 'Profile', href: '/settings', icon: User },
 ]
 
 /* ------------------------------------------------------------------ */

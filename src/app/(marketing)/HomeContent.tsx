@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Droplet } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
@@ -118,6 +119,7 @@ export function HomeContent() {
               onComplete={handleComplete}
               onExtend={handleExtend}
               onCancel={handleCancel}
+              elapsedHours={elapsedHours}
             />
 
             <Card padding="md" className="w-full">
@@ -141,20 +143,15 @@ export function HomeContent() {
         ) : (
           /* ── Ready to start ──────────────────────────────── */
           <div className="flex flex-1 flex-col items-center justify-center gap-8">
-            {/* Logo + tagline */}
+            {/* App icon + tagline */}
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 shadow-lg shadow-violet-500/20">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
-                    fill="white"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <Image
+                src="/icon.png"
+                alt="FastLane"
+                width={64}
+                height={64}
+                className="mx-auto mb-4 rounded-2xl shadow-lg shadow-violet-500/20"
+              />
               <h1 className="text-2xl font-bold text-[var(--fl-text)]">FastLane</h1>
               <p className="mt-1 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
                 Intermittent fasting, simplified

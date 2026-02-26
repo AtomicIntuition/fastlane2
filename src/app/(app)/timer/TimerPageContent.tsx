@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Zap, Droplet } from 'lucide-react'
+import { Droplet } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -21,7 +22,6 @@ import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
 import { BodyStateCard } from '@/components/fasting/BodyStateCard'
 import { BodyStateTimeline } from '@/components/fasting/BodyStateTimeline'
 import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
-import { Card } from '@/components/ui/Card'
 import { Dialog } from '@/components/ui/Dialog'
 import { getProtocol, type FastingProtocol } from '@/lib/fasting/protocols'
 import { formatDuration } from '@/lib/utils/dates'
@@ -48,6 +48,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [selectedProtocol, setSelectedProtocol] = useState<string | null>('16-8')
   const [showCheckin, setShowCheckin] = useState(false)
   const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
+  const [showProtocols, setShowProtocols] = useState(false)
 
   // Hydrate timer store from server data
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -96,6 +97,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
 
   const handleProtocolSelect = useCallback((protocol: FastingProtocol) => {
     setSelectedProtocol(protocol.id)
+    setShowProtocols(false)
   }, [])
 
   const handleCheckinSubmit = useCallback(
@@ -109,22 +111,19 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       })
       setShowCheckin(false)
       setCompletedSessionId(null)
-      router.push('/dashboard')
+      router.push('/timer')
     },
     [submitCheckin, completedSessionId, router],
   )
 
   const protocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
+  const selectedProtocolInfo = selectedProtocol ? getProtocol(selectedProtocol) : null
   const elapsedHours = timer.elapsed / 3_600_000
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
-      <h2 className="text-xl font-bold text-[var(--fl-text)] text-center">
-        {isActive ? 'Fasting in Progress' : 'Start a Fast'}
-      </h2>
-
+    <div className="mx-auto max-w-lg">
       {isActive ? (
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4">
           <TimerRing
             progress={timer.progress}
             hours={timer.hours}
@@ -166,41 +165,77 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             onComplete={handleComplete}
             onExtend={handleExtend}
             onCancel={handleCancel}
+            elapsedHours={elapsedHours}
           />
 
-          <Card padding="md" className="w-full">
+          <div className="w-full">
             <h3 className="mb-3 text-sm font-semibold text-[var(--fl-text)]">Body State Timeline</h3>
             <BodyStateTimeline
               elapsedHours={elapsedHours}
               fastingHours={timerStore.fastingHours ?? 16}
             />
-          </Card>
+          </div>
         </div>
       ) : (
-        <Card padding="lg" className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center justify-center gap-8 pt-8">
+          {/* App icon */}
           <div className="text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--fl-primary)]/10">
-              <Zap size={28} className="text-[var(--fl-primary)]" />
-            </div>
-            <p className="text-sm text-[var(--fl-text-secondary)]">
-              Choose a protocol to begin.
-            </p>
+            <Image
+              src="/icon.png"
+              alt="FastLane"
+              width={64}
+              height={64}
+              className="mx-auto rounded-2xl"
+            />
           </div>
 
-          <ProtocolPicker
-            selectedProtocol={selectedProtocol}
-            onSelect={handleProtocolSelect}
-            isPro={isPro}
-          />
+          {/* Selected protocol chip */}
+          {selectedProtocolInfo && !showProtocols && (
+            <button
+              type="button"
+              onClick={() => setShowProtocols(true)}
+              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
+            >
+              <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
+                {selectedProtocolInfo.name}
+              </span>
+              <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+                {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
+              </span>
+              <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+                Change
+              </span>
+            </button>
+          )}
 
-          <TimerControls
-            isActive={false}
-            onStart={handleStart}
-            onComplete={handleComplete}
-            onExtend={handleExtend}
-            onCancel={handleCancel}
-          />
-        </Card>
+          {/* Protocol picker (toggleable) */}
+          {showProtocols && (
+            <div className="w-full">
+              <ProtocolPicker
+                selectedProtocol={selectedProtocol}
+                onSelect={handleProtocolSelect}
+                isPro={isPro}
+              />
+            </div>
+          )}
+
+          {/* Pulsing START FAST button */}
+          <button
+            type="button"
+            onClick={handleStart}
+            className="group relative flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 text-white shadow-xl shadow-violet-500/25 transition-all hover:shadow-2xl hover:shadow-violet-500/30 active:scale-95"
+          >
+            <span className="absolute inset-0 animate-ping rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 opacity-20" style={{ animationDuration: '2s' }} />
+            <span className="absolute -inset-2 animate-pulse rounded-full border-2 border-violet-400/30" style={{ animationDuration: '2s' }} />
+            <span className="relative text-lg font-bold uppercase tracking-wider">
+              Start<br />Fast
+            </span>
+          </button>
+
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+            Tap to start a {selectedProtocolInfo?.fastingHours ?? 16}h fast
+          </p>
+        </div>
       )}
 
       <Dialog
