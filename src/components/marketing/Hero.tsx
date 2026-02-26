@@ -154,7 +154,7 @@ export function Hero() {
             {/* CTAs */}
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
-                href="/register"
+                href="/try"
                 className={cn(
                   'inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3',
                   'bg-emerald-500 text-white font-semibold text-base',
@@ -164,12 +164,12 @@ export function Hero() {
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2',
                 )}
               >
-                Start Fasting Free
+                Start Fasting Now
                 <ArrowRight className="h-4 w-4" />
               </Link>
 
-              <a
-                href="#features"
+              <Link
+                href="/register"
                 className={cn(
                   'inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3',
                   'border border-border bg-transparent font-semibold text-base text-foreground',
@@ -178,8 +178,8 @@ export function Hero() {
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2',
                 )}
               >
-                See How It Works
-              </a>
+                Create Free Account
+              </Link>
             </div>
           </div>
 

@@ -37,9 +37,9 @@ export function CTA() {
           sustainable habit.
         </p>
 
-        <div className="mt-10">
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link
-            href="/register"
+            href="/try"
             className={cn(
               'inline-flex items-center justify-center gap-2 rounded-lg px-8 py-4',
               'bg-white text-emerald-700 font-bold text-lg',
@@ -49,13 +49,25 @@ export function CTA() {
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-600',
             )}
           >
-            Start Your Free Account
+            Try It Now
             <ArrowRight className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/register"
+            className={cn(
+              'inline-flex items-center justify-center gap-2 rounded-lg px-8 py-4',
+              'border-2 border-white/30 text-white font-bold text-lg',
+              'transition-all duration-200',
+              'hover:bg-white/10',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-600',
+            )}
+          >
+            Create Free Account
           </Link>
         </div>
 
         <p className="mt-4 text-sm text-emerald-200">
-          No credit card required. Free forever on the basic plan.
+          No sign-up required to try. Create an account to save your progress.
         </p>
       </div>
     </section>
