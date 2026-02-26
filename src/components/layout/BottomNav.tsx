@@ -7,6 +7,7 @@ import {
   CalendarDays,
   TrendingUp,
   User,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
@@ -28,12 +29,25 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Profile', href: '/settings', icon: User },
 ]
 
+const GUEST_NAV_ITEMS: NavItem[] = [
+  { label: 'Timer', href: '/', icon: Timer },
+  { label: 'History', href: '/history', icon: CalendarDays },
+  { label: 'Insights', href: '/stats', icon: TrendingUp },
+  { label: 'Upgrade', href: '/register', icon: Sparkles },
+]
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-export function BottomNav() {
+export interface BottomNavProps {
+  /** Show guest nav items (Upgrade instead of Profile, / instead of /timer) */
+  guest?: boolean
+}
+
+export function BottomNav({ guest = false }: BottomNavProps) {
   const pathname = usePathname()
+  const items = guest ? GUEST_NAV_ITEMS : NAV_ITEMS
 
   return (
     <nav
@@ -45,7 +59,7 @@ export function BottomNav() {
       )}
     >
       <div className="flex h-16 items-center justify-around px-2">
-        {NAV_ITEMS.map((item) => {
+        {items.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`)
 

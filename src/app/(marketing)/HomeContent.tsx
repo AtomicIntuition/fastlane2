@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Droplet } from 'lucide-react'
+import { BottomNav } from '@/components/layout/BottomNav'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import { TimerRing } from '@/components/fasting/TimerRing'
@@ -74,7 +75,7 @@ export function HomeContent() {
       {/* Gradient accent bar */}
       <div className="fixed inset-x-0 top-0 z-20 h-1 bg-gradient-to-r from-blue-500 via-violet-500 to-amber-500" />
 
-      <main className="relative z-10 flex w-full max-w-lg flex-1 flex-col px-4 pb-8 pt-10 sm:px-6">
+      <main className="relative z-10 flex w-full max-w-lg flex-1 flex-col px-4 pb-24 pt-10 sm:px-6">
         {isActive ? (
           /* ── Active fast ─────────────────────────────────── */
           <div className="flex flex-1 flex-col items-center gap-5">
@@ -209,17 +210,18 @@ export function HomeContent() {
             </p>
 
             {/* Sign in link */}
-            <div className="mt-auto pt-8 text-center">
-              <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                Already have an account?{' '}
-                <Link href="/login" className="font-medium text-[var(--fl-primary)] hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            </div>
+            <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+              Already have an account?{' '}
+              <Link href="/login" className="font-medium text-[var(--fl-primary)] hover:underline">
+                Sign in
+              </Link>
+            </p>
           </div>
         )}
       </main>
+
+      {/* Guest bottom nav */}
+      <BottomNav guest />
     </div>
   )
 }
