@@ -1,0 +1,135 @@
+/* FastLane Design Tokens */
+:root {
+  /* Brand Colors */
+  --fl-green-50: #ecfdf5;
+  --fl-green-100: #d1fae5;
+  --fl-green-200: #a7f3d0;
+  --fl-green-300: #6ee7b7;
+  --fl-green-400: #34d399;
+  --fl-green-500: #10b981;
+  --fl-green-600: #059669;
+  --fl-green-700: #047857;
+  --fl-green-800: #065f46;
+  --fl-green-900: #064e3b;
+
+  --fl-orange-50: #fff7ed;
+  --fl-orange-100: #ffedd5;
+  --fl-orange-200: #fed7aa;
+  --fl-orange-300: #fdba74;
+  --fl-orange-400: #fb923c;
+  --fl-orange-500: #f97316;
+  --fl-orange-600: #ea580c;
+  --fl-orange-700: #c2410c;
+  --fl-orange-800: #9a3412;
+  --fl-orange-900: #7c2d12;
+
+  /* Neutral */
+  --fl-gray-50: #f9fafb;
+  --fl-gray-100: #f3f4f6;
+  --fl-gray-200: #e5e7eb;
+  --fl-gray-300: #d1d5db;
+  --fl-gray-400: #9ca3af;
+  --fl-gray-500: #6b7280;
+  --fl-gray-600: #4b5563;
+  --fl-gray-700: #374151;
+  --fl-gray-800: #1f2937;
+  --fl-gray-900: #111827;
+  --fl-gray-950: #030712;
+
+  /* Semantic Colors */
+  --fl-primary: var(--fl-green-500);
+  --fl-primary-hover: var(--fl-green-600);
+  --fl-primary-light: var(--fl-green-50);
+  --fl-secondary: var(--fl-orange-500);
+  --fl-secondary-hover: var(--fl-orange-600);
+  --fl-danger: #ef4444;
+  --fl-danger-hover: #dc2626;
+  --fl-warning: #f59e0b;
+  --fl-success: var(--fl-green-500);
+  --fl-info: #3b82f6;
+
+  /* Background */
+  --fl-bg: #ffffff;
+  --fl-bg-secondary: var(--fl-gray-50);
+  --fl-bg-tertiary: var(--fl-gray-100);
+  --fl-bg-elevated: #ffffff;
+
+  /* Text */
+  --fl-text: var(--fl-gray-900);
+  --fl-text-secondary: var(--fl-gray-600);
+  --fl-text-tertiary: var(--fl-gray-400);
+  --fl-text-inverse: #ffffff;
+
+  /* Border */
+  --fl-border: var(--fl-gray-200);
+  --fl-border-hover: var(--fl-gray-300);
+  --fl-border-focus: var(--fl-green-500);
+
+  /* Typography Scale */
+  --fl-text-xs: 0.75rem;
+  --fl-text-sm: 0.875rem;
+  --fl-text-base: 1rem;
+  --fl-text-lg: 1.125rem;
+  --fl-text-xl: 1.25rem;
+  --fl-text-2xl: 1.5rem;
+  --fl-text-3xl: 1.875rem;
+  --fl-text-4xl: 2.25rem;
+  --fl-text-5xl: 3rem;
+  --fl-text-6xl: 3.75rem;
+
+  /* Spacing */
+  --fl-space-1: 0.25rem;
+  --fl-space-2: 0.5rem;
+  --fl-space-3: 0.75rem;
+  --fl-space-4: 1rem;
+  --fl-space-5: 1.25rem;
+  --fl-space-6: 1.5rem;
+  --fl-space-8: 2rem;
+  --fl-space-10: 2.5rem;
+  --fl-space-12: 3rem;
+  --fl-space-16: 4rem;
+  --fl-space-20: 5rem;
+  --fl-space-24: 6rem;
+
+  /* Border Radius */
+  --fl-radius-sm: 0.375rem;
+  --fl-radius-md: 0.5rem;
+  --fl-radius-lg: 0.75rem;
+  --fl-radius-xl: 1rem;
+  --fl-radius-2xl: 1.5rem;
+  --fl-radius-full: 9999px;
+
+  /* Shadows */
+  --fl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --fl-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --fl-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --fl-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Transitions */
+  --fl-transition-fast: 150ms ease;
+  --fl-transition-base: 200ms ease;
+  --fl-transition-slow: 300ms ease;
+
+  /* Z-index */
+  --fl-z-dropdown: 50;
+  --fl-z-sticky: 100;
+  --fl-z-modal: 200;
+  --fl-z-toast: 300;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fl-bg: var(--fl-gray-950);
+    --fl-bg-secondary: var(--fl-gray-900);
+    --fl-bg-tertiary: var(--fl-gray-800);
+    --fl-bg-elevated: var(--fl-gray-900);
+
+    --fl-text: var(--fl-gray-50);
+    --fl-text-secondary: var(--fl-gray-400);
+    --fl-text-tertiary: var(--fl-gray-600);
+
+    --fl-border: var(--fl-gray-800);
+    --fl-border-hover: var(--fl-gray-700);
+  }
+}

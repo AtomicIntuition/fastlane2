@@ -1,0 +1,184 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { Zap } from 'lucide-react'
+import { useTimer } from '@/hooks/use-timer'
+import { useTimerStore } from '@/stores/timer-store'
+import {
+  useStartFast,
+  useCompleteFast,
+  useCancelFast,
+  useExtendFast,
+  useSubmitCheckin,
+  type FastingSessionData,
+} from '@/hooks/use-fasting-session'
+import { useApp } from '@/components/layout/AppShell'
+import { TimerRing } from '@/components/fasting/TimerRing'
+import { TimerControls } from '@/components/fasting/TimerControls'
+import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
+import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
+import { Card } from '@/components/ui/Card'
+import { Dialog } from '@/components/ui/Dialog'
+import { getProtocol, type FastingProtocol } from '@/lib/fasting/protocols'
+import { formatDuration } from '@/lib/utils/dates'
+
+interface TimerPageContentProps {
+  initialActiveSession: FastingSessionData | null
+}
+
+export function TimerPageContent({ initialActiveSession }: TimerPageContentProps) {
+  const { planId } = useApp()
+  const isPro = planId === 'pro'
+  const router = useRouter()
+
+  const timer = useTimer()
+  const timerStore = useTimerStore()
+
+  const startFast = useStartFast()
+  const completeFast = useCompleteFast()
+  const cancelFast = useCancelFast()
+  const extendFast = useExtendFast()
+  const submitCheckin = useSubmitCheckin()
+
+  const [selectedProtocol, setSelectedProtocol] = useState<string | null>('16-8')
+  const [showCheckin, setShowCheckin] = useState(false)
+  const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
+
+  // Hydrate timer store from server data
+  if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
+    timerStore.startTimer({
+      id: initialActiveSession.id,
+      protocol: initialActiveSession.protocol,
+      startedAt: initialActiveSession.startedAt,
+      targetEndAt: initialActiveSession.targetEndAt,
+      fastingHours: initialActiveSession.fastingHours,
+      eatingHours: initialActiveSession.eatingHours,
+    })
+  }
+
+  const isActive = timer.isActive
+
+  const handleStart = useCallback(() => {
+    if (!selectedProtocol) return
+    startFast.mutate(selectedProtocol)
+  }, [selectedProtocol, startFast])
+
+  const handleComplete = useCallback(() => {
+    if (!timer.sessionId) return
+    const sid = timer.sessionId
+    completeFast.mutate(sid, {
+      onSuccess: () => {
+        setCompletedSessionId(sid)
+        setShowCheckin(true)
+      },
+    })
+  }, [timer.sessionId, completeFast])
+
+  const handleCancel = useCallback(() => {
+    if (!timer.sessionId) return
+    cancelFast.mutate(timer.sessionId)
+  }, [timer.sessionId, cancelFast])
+
+  const handleExtend = useCallback(() => {
+    if (!timer.sessionId) return
+    extendFast.mutate({ sessionId: timer.sessionId, additionalHours: 1 })
+  }, [timer.sessionId, extendFast])
+
+  const handleProtocolSelect = useCallback((protocol: FastingProtocol) => {
+    setSelectedProtocol(protocol.id)
+  }, [])
+
+  const handleCheckinSubmit = useCallback(
+    async (data: CheckinInput) => {
+      await submitCheckin.mutateAsync({
+        mood: data.mood,
+        hungerLevel: data.hungerLevel,
+        energyLevel: data.energyLevel,
+        notes: data.notes || undefined,
+        fastingSessionId: completedSessionId ?? undefined,
+      })
+      setShowCheckin(false)
+      setCompletedSessionId(null)
+      router.push('/dashboard')
+    },
+    [submitCheckin, completedSessionId, router],
+  )
+
+  const protocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
+
+  return (
+    <div className="mx-auto max-w-lg space-y-6">
+      <h2 className="text-xl font-bold text-[var(--fl-text)] text-center">
+        {isActive ? 'Fasting in Progress' : 'Start a Fast'}
+      </h2>
+
+      {isActive ? (
+        <div className="flex flex-col items-center gap-6">
+          <TimerRing
+            progress={timer.progress}
+            hours={timer.hours}
+            minutes={timer.minutes}
+            seconds={timer.seconds}
+            isComplete={timer.isComplete}
+            isOvertime={timer.isOvertime}
+            overtimeMs={timer.overtimeMs}
+            protocol={protocolInfo?.name ?? timer.protocol}
+            isActive
+          />
+
+          <p className="text-sm text-[var(--fl-text-secondary)] text-center">
+            {timer.isComplete
+              ? 'You reached your goal! End the fast or keep going.'
+              : `${formatDuration(timer.remaining)} remaining`}
+          </p>
+
+          <TimerControls
+            isActive
+            onStart={handleStart}
+            onComplete={handleComplete}
+            onExtend={handleExtend}
+            onCancel={handleCancel}
+          />
+        </div>
+      ) : (
+        <Card padding="lg" className="flex flex-col items-center gap-6">
+          <div className="text-center">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--fl-primary)]/10">
+              <Zap size={28} className="text-[var(--fl-primary)]" />
+            </div>
+            <p className="text-sm text-[var(--fl-text-secondary)]">
+              Choose a protocol to begin.
+            </p>
+          </div>
+
+          <ProtocolPicker
+            selectedProtocol={selectedProtocol}
+            onSelect={handleProtocolSelect}
+            isPro={isPro}
+          />
+
+          <TimerControls
+            isActive={false}
+            onStart={handleStart}
+            onComplete={handleComplete}
+            onExtend={handleExtend}
+            onCancel={handleCancel}
+          />
+        </Card>
+      )}
+
+      <Dialog
+        open={showCheckin}
+        onClose={() => {
+          setShowCheckin(false)
+          setCompletedSessionId(null)
+        }}
+        title="How are you feeling?"
+        description="Log a quick check-in after your fast."
+      >
+        <CheckinForm onSubmit={handleCheckinSubmit} />
+      </Dialog>
+    </div>
+  )
+}

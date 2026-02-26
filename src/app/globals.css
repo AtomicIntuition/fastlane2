@@ -1,26 +1,133 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "../styles/tokens.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-primary: var(--fl-primary);
+  --color-primary-hover: var(--fl-primary-hover);
+  --color-primary-light: var(--fl-primary-light);
+  --color-secondary: var(--fl-secondary);
+  --color-secondary-hover: var(--fl-secondary-hover);
+  --color-danger: var(--fl-danger);
+  --color-danger-hover: var(--fl-danger-hover);
+  --color-warning: var(--fl-warning);
+  --color-success: var(--fl-success);
+  --color-info: var(--fl-info);
+
+  --color-background: var(--fl-bg);
+  --color-background-secondary: var(--fl-bg-secondary);
+  --color-background-tertiary: var(--fl-bg-tertiary);
+  --color-background-elevated: var(--fl-bg-elevated);
+
+  --color-foreground: var(--fl-text);
+  --color-foreground-secondary: var(--fl-text-secondary);
+  --color-foreground-tertiary: var(--fl-text-tertiary);
+  --color-foreground-inverse: var(--fl-text-inverse);
+
+  --color-border: var(--fl-border);
+  --color-border-hover: var(--fl-border-hover);
+  --color-border-focus: var(--fl-border-focus);
+
+  /* Green scale */
+  --color-green-50: var(--fl-green-50);
+  --color-green-100: var(--fl-green-100);
+  --color-green-200: var(--fl-green-200);
+  --color-green-300: var(--fl-green-300);
+  --color-green-400: var(--fl-green-400);
+  --color-green-500: var(--fl-green-500);
+  --color-green-600: var(--fl-green-600);
+  --color-green-700: var(--fl-green-700);
+  --color-green-800: var(--fl-green-800);
+  --color-green-900: var(--fl-green-900);
+
+  /* Orange scale */
+  --color-orange-50: var(--fl-orange-50);
+  --color-orange-100: var(--fl-orange-100);
+  --color-orange-200: var(--fl-orange-200);
+  --color-orange-300: var(--fl-orange-300);
+  --color-orange-400: var(--fl-orange-400);
+  --color-orange-500: var(--fl-orange-500);
+  --color-orange-600: var(--fl-orange-600);
+  --color-orange-700: var(--fl-orange-700);
+  --color-orange-800: var(--fl-orange-800);
+  --color-orange-900: var(--fl-orange-900);
+
+  /* Gray scale */
+  --color-gray-50: var(--fl-gray-50);
+  --color-gray-100: var(--fl-gray-100);
+  --color-gray-200: var(--fl-gray-200);
+  --color-gray-300: var(--fl-gray-300);
+  --color-gray-400: var(--fl-gray-400);
+  --color-gray-500: var(--fl-gray-500);
+  --color-gray-600: var(--fl-gray-600);
+  --color-gray-700: var(--fl-gray-700);
+  --color-gray-800: var(--fl-gray-800);
+  --color-gray-900: var(--fl-gray-900);
+  --color-gray-950: var(--fl-gray-950);
+
+  /* Shadows */
+  --shadow-sm: var(--fl-shadow-sm);
+  --shadow-md: var(--fl-shadow-md);
+  --shadow-lg: var(--fl-shadow-lg);
+  --shadow-xl: var(--fl-shadow-xl);
+
+  /* Radius */
+  --radius-sm: var(--fl-radius-sm);
+  --radius-md: var(--fl-radius-md);
+  --radius-lg: var(--fl-radius-lg);
+  --radius-xl: var(--fl-radius-xl);
+  --radius-2xl: var(--fl-radius-2xl);
+  --radius-full: var(--fl-radius-full);
+
+  /* Font */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base styles */
+body {
+  background: var(--fl-bg);
+  color: var(--fl-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--fl-primary);
+  outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--fl-primary);
+  color: white;
+  padding: 8px 16px;
+  z-index: 1000;
+  transition: top var(--fl-transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Smooth scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Timer animation */
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--fl-green-400)); }
+  50% { filter: drop-shadow(0 0 16px var(--fl-green-300)); }
+}
+
+.timer-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
