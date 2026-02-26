@@ -28,6 +28,7 @@ export default async function TimerPage() {
         targetEndAt: activeSessionRaw.targetEndAt,
         actualEndAt: activeSessionRaw.actualEndAt,
         status: activeSessionRaw.status ?? 'active',
+        waterGlasses: activeSessionRaw.waterGlasses ?? 0,
         notes: activeSessionRaw.notes,
         createdAt: activeSessionRaw.createdAt ?? 0,
       }

@@ -4,6 +4,7 @@ import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/db'
 import { subscriptions } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { validateCsrfRequest } from '@/lib/security/csrf'
 
 /* ================================================================== */
 /*  POST /api/stripe/portal                                            */
@@ -15,6 +16,13 @@ import { eq } from 'drizzle-orm'
 
 export async function POST(request: Request) {
   try {
+    /* -------------------------------------------------------------- */
+    /*  CSRF check                                                     */
+    /* -------------------------------------------------------------- */
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 })
+    }
+
     /* -------------------------------------------------------------- */
     /*  Auth check                                                     */
     /* -------------------------------------------------------------- */
@@ -28,11 +36,10 @@ export async function POST(request: Request) {
     /* -------------------------------------------------------------- */
     /*  Look up the Stripe customer ID                                 */
     /* -------------------------------------------------------------- */
-    const subscription = await db
+    const [subscription] = await db
       .select()
       .from(subscriptions)
       .where(eq(subscriptions.userId, userId))
-      .get()
 
     if (!subscription?.stripeCustomerId) {
       return NextResponse.json(

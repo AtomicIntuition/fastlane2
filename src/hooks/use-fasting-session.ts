@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTimerStore } from '@/stores/timer-store'
 import { toast } from '@/components/ui/Toast'
+import { getCsrfToken } from '@/components/shared/Providers'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -18,6 +19,7 @@ export interface FastingSessionData {
   targetEndAt: number
   actualEndAt: number | null
   status: 'active' | 'completed' | 'cancelled'
+  waterGlasses: number
   notes: string | null
   createdAt: number
 }
@@ -64,9 +66,13 @@ async function postFasting<T>(
   endpoint: string,
   body: object,
 ): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const csrf = getCsrfToken()
+  if (csrf) headers['x-csrf-token'] = csrf
+
   const res = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(body),
   })
   const json = await res.json().catch(() => ({ error: 'Unexpected response' }))
@@ -244,6 +250,29 @@ export function useSubmitCheckin() {
     },
     onError: (error: Error) => {
       toast.error('Could not save check-in', {
+        description: error.message,
+      })
+    },
+  })
+}
+
+/* ------------------------------------------------------------------ */
+/*  useAddWater                                                        */
+/* ------------------------------------------------------------------ */
+
+export function useAddWater() {
+  const queryClient = useQueryClient()
+  const addWaterLocal = useTimerStore((s) => s.addWater)
+
+  return useMutation({
+    mutationFn: (sessionId: string) =>
+      postFasting<FastingSessionData>('/api/fasting/water', { sessionId }),
+    onSuccess: (session) => {
+      addWaterLocal()
+      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+    },
+    onError: (error: Error) => {
+      toast.error('Could not log water', {
         description: error.message,
       })
     },

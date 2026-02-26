@@ -18,17 +18,15 @@ export default async function SettingsPage() {
 
   const userId = session.user.id
 
-  const [profile, subscription] = await Promise.all([
+  const [[profile], [subscription]] = await Promise.all([
     db
       .select()
       .from(userProfiles)
-      .where(eq(userProfiles.userId, userId))
-      .get(),
+      .where(eq(userProfiles.userId, userId)),
     db
       .select()
       .from(subscriptions)
-      .where(eq(subscriptions.userId, userId))
-      .get(),
+      .where(eq(subscriptions.userId, userId)),
   ])
 
   return (

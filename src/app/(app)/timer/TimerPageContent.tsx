@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Zap } from 'lucide-react'
+import { Zap, Droplet } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -10,6 +10,7 @@ import {
   useCompleteFast,
   useCancelFast,
   useExtendFast,
+  useAddWater,
   useSubmitCheckin,
   type FastingSessionData,
 } from '@/hooks/use-fasting-session'
@@ -17,6 +18,8 @@ import { useApp } from '@/components/layout/AppShell'
 import { TimerRing } from '@/components/fasting/TimerRing'
 import { TimerControls } from '@/components/fasting/TimerControls'
 import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
+import { BodyStateCard } from '@/components/fasting/BodyStateCard'
+import { BodyStateTimeline } from '@/components/fasting/BodyStateTimeline'
 import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
 import { Card } from '@/components/ui/Card'
 import { Dialog } from '@/components/ui/Dialog'
@@ -39,6 +42,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const completeFast = useCompleteFast()
   const cancelFast = useCancelFast()
   const extendFast = useExtendFast()
+  const addWater = useAddWater()
   const submitCheckin = useSubmitCheckin()
 
   const [selectedProtocol, setSelectedProtocol] = useState<string | null>('16-8')
@@ -55,6 +59,11 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       fastingHours: initialActiveSession.fastingHours,
       eatingHours: initialActiveSession.eatingHours,
     })
+    // Restore water count from DB
+    const serverWater = initialActiveSession.waterGlasses ?? 0
+    if (serverWater > 0) {
+      for (let i = 0; i < serverWater; i++) timerStore.addWater()
+    }
   }
 
   const isActive = timer.isActive
@@ -106,6 +115,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   )
 
   const protocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
+  const elapsedHours = timer.elapsed / 3_600_000
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
@@ -127,6 +137,23 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             isActive
           />
 
+          <BodyStateCard elapsedHours={elapsedHours} className="w-full" />
+
+          {/* Water tracking */}
+          <button
+            type="button"
+            onClick={() => timer.sessionId && addWater.mutate(timer.sessionId)}
+            className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50"
+          >
+            <Droplet size={18} />
+            <span>Water</span>
+            {timerStore.waterGlasses > 0 && (
+              <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
+                {timerStore.waterGlasses}
+              </span>
+            )}
+          </button>
+
           <p className="text-sm text-[var(--fl-text-secondary)] text-center">
             {timer.isComplete
               ? 'You reached your goal! End the fast or keep going.'
@@ -140,6 +167,14 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             onExtend={handleExtend}
             onCancel={handleCancel}
           />
+
+          <Card padding="md" className="w-full">
+            <h3 className="mb-3 text-sm font-semibold text-[var(--fl-text)]">Body State Timeline</h3>
+            <BodyStateTimeline
+              elapsedHours={elapsedHours}
+              fastingHours={timerStore.fastingHours ?? 16}
+            />
+          </Card>
         </div>
       ) : (
         <Card padding="lg" className="flex flex-col items-center gap-6">

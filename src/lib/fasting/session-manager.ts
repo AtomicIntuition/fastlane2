@@ -6,11 +6,10 @@ import { nowUtc } from '@/lib/utils/dates'
 import { getProtocol } from './protocols'
 
 export async function startFast(userId: string, protocolId: string, customHours?: { fasting: number; eating: number }) {
-  const active = await db
+  const [active] = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.userId, userId), eq(fastingSessions.status, 'active')))
-    .get()
 
   if (active) {
     throw new Error('You already have an active fasting session')
@@ -37,15 +36,15 @@ export async function startFast(userId: string, protocolId: string, customHours?
       createdAt: now,
     })
 
-  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, id)).get())!
+  const [created] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, id))
+  return created!
 }
 
 export async function completeFast(userId: string, sessionId: string) {
-  const session = await db
+  const [session] = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
-    .get()
 
   if (!session) throw new Error('Session not found')
   if (session.status !== 'active') throw new Error('Session is not active')
@@ -56,15 +55,15 @@ export async function completeFast(userId: string, sessionId: string) {
     .set({ status: 'completed', actualEndAt: now })
     .where(eq(fastingSessions.id, sessionId))
 
-  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
+  const [updated] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId))
+  return updated!
 }
 
 export async function cancelFast(userId: string, sessionId: string) {
-  const session = await db
+  const [session] = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
-    .get()
 
   if (!session) throw new Error('Session not found')
   if (session.status !== 'active') throw new Error('Session is not active')
@@ -75,15 +74,16 @@ export async function cancelFast(userId: string, sessionId: string) {
     .set({ status: 'cancelled', actualEndAt: now })
     .where(eq(fastingSessions.id, sessionId))
 
-  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
+  const [updated] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId))
+  return updated!
 }
 
 export async function getActiveSession(userId: string) {
-  return (await db
+  const [session] = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.userId, userId), eq(fastingSessions.status, 'active')))
-    .get()) ?? null
+  return session ?? null
 }
 
 export async function getSessionHistory(userId: string, limit = 50, offset = 0) {
@@ -94,15 +94,32 @@ export async function getSessionHistory(userId: string, limit = 50, offset = 0) 
     .orderBy(desc(fastingSessions.createdAt))
     .limit(limit)
     .offset(offset)
-    .all()
 }
 
-export async function extendFast(userId: string, sessionId: string, additionalHours: number) {
-  const session = await db
+export async function addWater(userId: string, sessionId: string) {
+  const [session] = await db
     .select()
     .from(fastingSessions)
     .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
-    .get()
+
+  if (!session) throw new Error('Session not found')
+  if (session.status !== 'active') throw new Error('Session is not active')
+
+  const newCount = (session.waterGlasses ?? 0) + 1
+
+  await db.update(fastingSessions)
+    .set({ waterGlasses: newCount })
+    .where(eq(fastingSessions.id, sessionId))
+
+  const [updated] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId))
+  return updated!
+}
+
+export async function extendFast(userId: string, sessionId: string, additionalHours: number) {
+  const [session] = await db
+    .select()
+    .from(fastingSessions)
+    .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
 
   if (!session) throw new Error('Session not found')
   if (session.status !== 'active') throw new Error('Session is not active')
@@ -116,5 +133,6 @@ export async function extendFast(userId: string, sessionId: string, additionalHo
     })
     .where(eq(fastingSessions.id, sessionId))
 
-  return (await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId)).get())!
+  const [updated] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId))
+  return updated!
 }

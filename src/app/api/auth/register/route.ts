@@ -6,9 +6,14 @@ import { eq } from 'drizzle-orm'
 import { registerSchema } from '@/lib/utils/validation'
 import { generateId } from '@/lib/utils/id'
 import { nowUtc } from '@/lib/utils/dates'
+import { validateCsrfRequest } from '@/lib/security/csrf'
 
 export async function POST(request: Request) {
   try {
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 })
+    }
+
     const body = await request.json()
     const parsed = registerSchema.safeParse(body)
 
@@ -22,7 +27,7 @@ export async function POST(request: Request) {
     const { name, email, password } = parsed.data
 
     // Check if user exists
-    const existing = await db.select().from(users).where(eq(users.email, email)).get()
+    const [existing] = await db.select().from(users).where(eq(users.email, email))
     if (existing) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
     }

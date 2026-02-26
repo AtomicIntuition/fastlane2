@@ -6,9 +6,14 @@ import { dailyCheckins } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { generateId } from '@/lib/utils/id'
 import { nowUtc, toDateString } from '@/lib/utils/dates'
+import { validateCsrfRequest } from '@/lib/security/csrf'
 
 export async function POST(request: Request) {
   try {
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 })
+    }
+
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -43,11 +48,10 @@ export async function POST(request: Request) {
         createdAt: now,
       })
 
-    const checkin = await db
+    const [checkin] = await db
       .select()
       .from(dailyCheckins)
       .where(eq(dailyCheckins.id, id))
-      .get()
 
     return NextResponse.json({ data: checkin }, { status: 201 })
   } catch (error) {

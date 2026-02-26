@@ -16,11 +16,10 @@ export const credentialsProvider = Credentials({
 
     const { email, password } = parsed.data
 
-    const user = await db
+    const [user] = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .get()
 
     if (!user || !user.passwordHash) return null
 

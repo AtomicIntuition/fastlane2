@@ -27,6 +27,7 @@ export default async function HistoryPage() {
     targetEndAt: s.targetEndAt,
     actualEndAt: s.actualEndAt,
     status: s.status ?? 'active',
+    waterGlasses: s.waterGlasses ?? 0,
     notes: s.notes,
     createdAt: s.createdAt ?? 0,
   }))

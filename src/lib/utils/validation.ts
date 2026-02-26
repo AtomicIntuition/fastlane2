@@ -119,3 +119,15 @@ export const startFastSchema = z.object({
 });
 
 export type StartFastInput = z.infer<typeof startFastSchema>;
+
+// ---------------------------------------------------------------------------
+// Add water schema
+// ---------------------------------------------------------------------------
+
+export const addWaterSchema = z.object({
+  sessionId: z
+    .string()
+    .min(1, 'Session ID is required'),
+});
+
+export type AddWaterInput = z.infer<typeof addWaterSchema>;

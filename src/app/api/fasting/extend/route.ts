@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { extendFast } from '@/lib/fasting/session-manager'
+import { validateCsrfRequest } from '@/lib/security/csrf'
 
 export async function POST(request: Request) {
   try {
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 })
+    }
+
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

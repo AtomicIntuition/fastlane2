@@ -6,9 +6,17 @@ import { eq } from 'drizzle-orm';
 import { onboardingSchema } from '@/lib/utils/validation';
 import { generateId } from '@/lib/utils/id';
 import { nowUtc } from '@/lib/utils/dates';
+import { validateCsrfRequest } from '@/lib/security/csrf';
 
 export async function POST(request: Request) {
   try {
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json(
+        { error: 'Invalid CSRF token' },
+        { status: 403 },
+      );
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -33,11 +41,10 @@ export async function POST(request: Request) {
     const notificationsEnabled = body.notificationsEnabled !== false ? 1 : 0;
     const now = nowUtc();
 
-    const existing = await db
+    const [existing] = await db
       .select()
       .from(userProfiles)
-      .where(eq(userProfiles.userId, userId))
-      .get();
+      .where(eq(userProfiles.userId, userId));
 
     if (existing) {
       await db.update(userProfiles)

@@ -32,11 +32,11 @@ function extractSubscriptionId(invoice: Stripe.Invoice): string | null {
  * Look up the subscription record for a given Stripe subscription ID.
  */
 async function findBySubscriptionId(stripeSubscriptionId: string) {
-  return (await db
+  const [row] = await db
     .select()
     .from(subscriptions)
     .where(eq(subscriptions.stripeSubscriptionId, stripeSubscriptionId))
-    .get()) ?? undefined
+  return row ?? undefined
 }
 
 /* ================================================================== */
@@ -78,11 +78,10 @@ export async function handleCheckoutCompleted(
   const now = nowUtc()
 
   // Check if a subscription row already exists for this user
-  const existing = await db
+  const [existing] = await db
     .select()
     .from(subscriptions)
     .where(eq(subscriptions.userId, userId))
-    .get()
 
   if (existing) {
     // Update the existing record (idempotent)

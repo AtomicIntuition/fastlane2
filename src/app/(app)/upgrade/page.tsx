@@ -21,11 +21,10 @@ export default async function UpgradePage() {
   /* ---------------------------------------------------------------- */
   /*  Check existing subscription                                      */
   /* ---------------------------------------------------------------- */
-  const subscription = await db
+  const [subscription] = await db
     .select()
     .from(subscriptions)
     .where(eq(subscriptions.userId, userId))
-    .get()
 
   const isProActive =
     subscription?.status === 'active' || subscription?.status === 'trialing'

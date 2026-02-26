@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -49,6 +50,16 @@ export default function LoginPage() {
         {/* Email login form */}
         <LoginForm />
       </Card>
+
+      {/* Guest mode link */}
+      <p className="mt-4 text-center text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
+        <Link
+          href="/try"
+          className="font-medium text-[var(--fl-primary)] hover:text-[var(--fl-primary-hover)] transition-colors"
+        >
+          Try without an account
+        </Link>
+      </p>
     </div>
   );
 }

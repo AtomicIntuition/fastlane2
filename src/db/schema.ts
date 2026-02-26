@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, integer, primaryKey } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { ulid } from 'ulid';
 
@@ -6,7 +6,7 @@ import { ulid } from 'ulid';
 // Auth.js compatible tables
 // ---------------------------------------------------------------------------
 
-export const users = sqliteTable('users', {
+export const users = pgTable('users', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -21,7 +21,7 @@ export const users = sqliteTable('users', {
     .$defaultFn(() => Date.now()),
 });
 
-export const accounts = sqliteTable('accounts', {
+export const accounts = pgTable('accounts', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -40,7 +40,7 @@ export const accounts = sqliteTable('accounts', {
   session_state: text('session_state'),
 });
 
-export const sessions = sqliteTable('sessions', {
+export const sessions = pgTable('sessions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -51,7 +51,7 @@ export const sessions = sqliteTable('sessions', {
   expires: integer('expires').notNull(),
 });
 
-export const verificationTokens = sqliteTable(
+export const verificationTokens = pgTable(
   'verificationTokens',
   {
     identifier: text('identifier').notNull(),
@@ -67,7 +67,7 @@ export const verificationTokens = sqliteTable(
 // Application tables
 // ---------------------------------------------------------------------------
 
-export const userProfiles = sqliteTable('userProfiles', {
+export const userProfiles = pgTable('userProfiles', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -91,7 +91,7 @@ export const userProfiles = sqliteTable('userProfiles', {
     .$defaultFn(() => Date.now()),
 });
 
-export const fastingSessions = sqliteTable('fastingSessions', {
+export const fastingSessions = pgTable('fastingSessions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -107,12 +107,13 @@ export const fastingSessions = sqliteTable('fastingSessions', {
   status: text('status', {
     enum: ['active', 'completed', 'cancelled'],
   }).default('active'),
+  waterGlasses: integer('waterGlasses').default(0),
   notes: text('notes'),
   createdAt: integer('createdAt')
     .$defaultFn(() => Date.now()),
 });
 
-export const dailyCheckins = sqliteTable('dailyCheckins', {
+export const dailyCheckins = pgTable('dailyCheckins', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -132,7 +133,7 @@ export const dailyCheckins = sqliteTable('dailyCheckins', {
     .$defaultFn(() => Date.now()),
 });
 
-export const subscriptions = sqliteTable('subscriptions', {
+export const subscriptions = pgTable('subscriptions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -155,7 +156,7 @@ export const subscriptions = sqliteTable('subscriptions', {
     .$defaultFn(() => Date.now()),
 });
 
-export const analyticsEvents = sqliteTable('analyticsEvents', {
+export const analyticsEvents = pgTable('analyticsEvents', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => ulid()),

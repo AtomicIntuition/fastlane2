@@ -11,6 +11,7 @@ export interface TimerState {
   targetEndAt: number | null // UTC ms
   fastingHours: number | null
   eatingHours: number | null
+  waterGlasses: number
 
   // Computed on each tick (not persisted, derived)
   isActive: boolean
@@ -26,6 +27,7 @@ export interface TimerState {
   }) => void
   stopTimer: () => void
   updateTarget: (targetEndAt: number, fastingHours: number) => void
+  addWater: () => void
   clear: () => void
 }
 
@@ -38,6 +40,7 @@ export const useTimerStore = create<TimerState>()(
       targetEndAt: null,
       fastingHours: null,
       eatingHours: null,
+      waterGlasses: 0,
       isActive: false,
 
       startTimer: (session) =>
@@ -48,6 +51,7 @@ export const useTimerStore = create<TimerState>()(
           targetEndAt: session.targetEndAt,
           fastingHours: session.fastingHours,
           eatingHours: session.eatingHours,
+          waterGlasses: 0,
           isActive: true,
         }),
 
@@ -62,6 +66,11 @@ export const useTimerStore = create<TimerState>()(
           fastingHours,
         }),
 
+      addWater: () =>
+        set((state) => ({
+          waterGlasses: state.waterGlasses + 1,
+        })),
+
       clear: () =>
         set({
           sessionId: null,
@@ -70,6 +79,7 @@ export const useTimerStore = create<TimerState>()(
           targetEndAt: null,
           fastingHours: null,
           eatingHours: null,
+          waterGlasses: 0,
           isActive: false,
         }),
     }),
@@ -82,6 +92,7 @@ export const useTimerStore = create<TimerState>()(
         targetEndAt: state.targetEndAt,
         fastingHours: state.fastingHours,
         eatingHours: state.eatingHours,
+        waterGlasses: state.waterGlasses,
         isActive: state.isActive,
       }),
     }

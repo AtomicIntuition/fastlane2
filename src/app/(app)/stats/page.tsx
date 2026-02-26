@@ -73,7 +73,6 @@ export default async function StatsPage() {
     .from(fastingSessions)
     .where(eq(fastingSessions.userId, userId))
     .orderBy(desc(fastingSessions.createdAt))
-    .all()
 
   /* ---- Streaks ---- */
   const completedSessions = allSessions

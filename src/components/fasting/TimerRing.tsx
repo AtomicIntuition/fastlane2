@@ -74,10 +74,13 @@ export function TimerRing({
   const clampedProgress = Math.min(Math.max(0, progress), 1)
   const dashOffset = CIRCUMFERENCE * (1 - clampedProgress)
 
-  // Determine ring color
+  // Determine ring color — gradient when active (not complete), solid green when complete
+  const useGradient = isActive && !isComplete
   const ringColor = isComplete
     ? 'var(--fl-success, #22c55e)'
-    : 'var(--fl-primary, #22c55e)'
+    : useGradient
+      ? 'url(#timer-gradient)'
+      : 'var(--fl-primary, #22c55e)'
 
   // Status text
   const statusText = !isActive
@@ -104,6 +107,15 @@ export function TimerRing({
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="drop-shadow-sm"
       >
+        {/* Gradient definition for active ring */}
+        <defs>
+          <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--fl-timer-start, #3b82f6)" />
+            <stop offset="50%" stopColor="var(--fl-timer-mid, #8b5cf6)" />
+            <stop offset="100%" stopColor="var(--fl-timer-end, #f59e0b)" />
+          </linearGradient>
+        </defs>
+
         {/* Background track circle */}
         <circle
           cx={CENTER}
@@ -132,7 +144,11 @@ export function TimerRing({
             isComplete && 'animate-pulse',
           )}
           style={{
-            filter: isComplete ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.5))' : undefined,
+            filter: isComplete
+              ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.5))'
+              : useGradient
+                ? 'drop-shadow(0 0 6px rgba(139, 92, 246, 0.35))'
+                : undefined,
           }}
         />
 

@@ -1,4 +1,4 @@
-import { migrate } from 'drizzle-orm/libsql/migrator';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import path from 'node:path';
 import { db } from './index';
 

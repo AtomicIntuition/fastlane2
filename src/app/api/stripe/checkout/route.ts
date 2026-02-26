@@ -7,6 +7,7 @@ import { eq } from 'drizzle-orm'
 import { generateId } from '@/lib/utils/id'
 import { nowUtc } from '@/lib/utils/dates'
 import { PRO_PLAN } from '@/lib/stripe/plans'
+import { validateCsrfRequest } from '@/lib/security/csrf'
 
 /* ================================================================== */
 /*  POST /api/stripe/checkout                                          */
@@ -17,6 +18,13 @@ import { PRO_PLAN } from '@/lib/stripe/plans'
 
 export async function POST(request: Request) {
   try {
+    /* -------------------------------------------------------------- */
+    /*  CSRF check                                                     */
+    /* -------------------------------------------------------------- */
+    if (!validateCsrfRequest(request)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 })
+    }
+
     /* -------------------------------------------------------------- */
     /*  Auth check                                                     */
     /* -------------------------------------------------------------- */
@@ -57,11 +65,10 @@ export async function POST(request: Request) {
     let stripeCustomerId: string | null = null
 
     // Check for an existing subscription record with a stored customer ID
-    const existingSub = await db
+    const [existingSub] = await db
       .select()
       .from(subscriptions)
       .where(eq(subscriptions.userId, userId))
-      .get()
 
     if (existingSub?.stripeCustomerId) {
       stripeCustomerId = existingSub.stripeCustomerId
