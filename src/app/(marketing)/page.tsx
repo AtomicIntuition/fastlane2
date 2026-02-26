@@ -1,17 +1,13 @@
-import { Hero } from '@/components/marketing/Hero'
-import { Features } from '@/components/marketing/Features'
-import { Testimonials } from '@/components/marketing/Testimonials'
-import { PricingTable } from '@/components/marketing/PricingTable'
-import { CTA } from '@/components/marketing/CTA'
+import { auth } from '@/lib/auth/auth'
+import { redirect } from 'next/navigation'
+import { HomeContent } from './HomeContent'
 
-export default function LandingPage() {
-  return (
-    <>
-      <Hero />
-      <Features />
-      <Testimonials />
-      <PricingTable />
-      <CTA />
-    </>
-  )
+export default async function HomePage() {
+  const session = await auth().catch(() => null)
+
+  if (session?.user?.id) {
+    redirect('/timer')
+  }
+
+  return <HomeContent />
 }

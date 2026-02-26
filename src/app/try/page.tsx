@@ -1,5 +1,5 @@
-import { GuestTimerContent } from './GuestTimerContent'
+import { redirect } from 'next/navigation'
 
-export default function GuestPage() {
-  return <GuestTimerContent />
+export default function TryPage() {
+  redirect('/')
 }
