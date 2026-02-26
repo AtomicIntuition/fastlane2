@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { hash } from 'bcryptjs';
 import { ulid } from 'ulid';
 import { db } from './index';
@@ -22,6 +23,16 @@ import {
  */
 async function seed(): Promise<void> {
   console.log('[seed] Seeding database...');
+
+  // Clean existing seed data so re-runs don't fail
+  const existing = db.select().from(users).where(eq(users.email, 'jane@example.com')).get();
+  if (existing) {
+    db.delete(dailyCheckins).where(eq(dailyCheckins.userId, existing.id)).run();
+    db.delete(fastingSessions).where(eq(fastingSessions.userId, existing.id)).run();
+    db.delete(userProfiles).where(eq(userProfiles.userId, existing.id)).run();
+    db.delete(users).where(eq(users.id, existing.id)).run();
+    console.log('[seed] Cleaned previous seed data');
+  }
 
   // ------------------------------------------
   // Test user

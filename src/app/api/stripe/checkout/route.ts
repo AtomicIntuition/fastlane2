@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { stripe } from '@/lib/stripe/client'
+import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/db'
 import { subscriptions } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       stripeCustomerId = existingSub.stripeCustomerId
     } else {
       // Create a new Stripe customer
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: userEmail ?? undefined,
         metadata: { userId },
       })
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     /* -------------------------------------------------------------- */
     /*  Create Stripe Checkout Session                                  */
     /* -------------------------------------------------------------- */
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await getStripe().checkout.sessions.create({
       mode: 'subscription',
       client_reference_id: userId,
       customer: stripeCustomerId,

@@ -4,35 +4,46 @@ import path from 'node:path';
 import fs from 'node:fs';
 import * as schema from './schema';
 
-// Resolve the database file relative to the project root.
-// In production you may want to use an absolute path via an env var.
-const DB_PATH = path.resolve(process.cwd(), 'data', 'fastlane.db');
+let _sqlite: InstanceType<typeof Database> | undefined;
+let _db: ReturnType<typeof drizzle<typeof schema>> | undefined;
 
-// Ensure the data directory exists before opening the database.
-const dataDir = path.dirname(DB_PATH);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+function ensureDb() {
+  if (_db && _sqlite) return;
+
+  const DB_PATH = path.resolve(process.cwd(), 'data', 'fastlane.db');
+  const dataDir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
+  _sqlite = new Database(DB_PATH);
+  _sqlite.pragma('journal_mode = WAL');
+  _sqlite.pragma('foreign_keys = ON');
+  _db = drizzle(_sqlite, { schema });
 }
 
-/**
- * Raw better-sqlite3 connection.
- *
- * Exported for cases where you need direct SQLite access (e.g. backups,
- * PRAGMA statements, or manual transactions).
- */
-export const sqlite = new Database(DB_PATH);
+export function getDb() {
+  ensureDb();
+  return _db!;
+}
 
-// Enable WAL mode for better concurrent read performance.
-sqlite.pragma('journal_mode = WAL');
+export function getSqlite() {
+  ensureDb();
+  return _sqlite!;
+}
 
-// Enforce foreign key constraints at the database level.
-sqlite.pragma('foreign_keys = ON');
+// Legacy named exports — kept so existing `import { db } from '@/db'`
+// continues to work at runtime. These getters defer initialization until
+// the first property access, avoiding crashes during `next build` on
+// platforms without a filesystem (e.g. Vercel).
+export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {
+  get(_, prop) {
+    return Reflect.get(getDb(), prop);
+  },
+});
 
-/**
- * Drizzle ORM instance pre-configured with the full application schema.
- *
- * Usage:
- *   import { db } from '@/db';
- *   const allUsers = await db.select().from(schema.users);
- */
-export const db = drizzle(sqlite, { schema });
+export const sqlite = new Proxy({} as InstanceType<typeof Database>, {
+  get(_, prop) {
+    return Reflect.get(getSqlite(), prop);
+  },
+});

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { stripe } from '@/lib/stripe/client'
+import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/db'
 import { subscriptions } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     /* -------------------------------------------------------------- */
     /*  Create Stripe Portal Session                                    */
     /* -------------------------------------------------------------- */
-    const portalSession = await stripe.billingPortal.sessions.create({
+    const portalSession = await getStripe().billingPortal.sessions.create({
       customer: subscription.stripeCustomerId,
       return_url: `${origin}/settings`,
     })
