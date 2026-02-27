@@ -59,6 +59,17 @@ export function AppShell({ children, user, planId }: AppShellProps) {
 
   return (
     <AppContext.Provider value={{ user, planId }}>
+      {/* Background image for guest experience */}
+      {isGuest && (
+        <div
+          className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/bg.png)' }}
+        >
+          {/* Subtle overlay for text readability */}
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+      )}
+
       {/* Sidebar (desktop: persistent, mobile: slide-out) — only for logged-in users */}
       {!isGuest && (
         <Sidebar
