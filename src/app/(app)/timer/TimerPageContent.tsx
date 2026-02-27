@@ -260,16 +260,8 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       ) : (
         <div className="flex flex-col items-center justify-center gap-6 pt-6">
           {/* Title */}
-          <h1
-            className="text-center font-[family-name:var(--font-playfair)] text-[2rem] font-black italic leading-tight tracking-tight"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #c084fc)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 2px 4px rgba(99,102,241,0.15))',
-            }}
-          >
-            Intermittent<br />Fasting
+          <h1 className="text-center font-[family-name:var(--font-playfair)] text-[2rem] font-black italic leading-tight tracking-tight text-[var(--fl-text)]">
+            Intermittent Fasting
           </h1>
 
           {/* Protocol chip */}
