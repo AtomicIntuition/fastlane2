@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -54,6 +54,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showProtocols, setShowProtocols] = useState(false)
   const [showLearnMore, setShowLearnMore] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
+  const [showTips, setShowTips] = useState(false)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -352,6 +353,67 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                       <p className="text-[11px] font-medium leading-snug text-[var(--fl-text-secondary)]">
                         {item.text}
                       </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Tips for Success — accordion (collapsed by default) */}
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={() => setShowTips(!showTips)}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
+            >
+              <Lightbulb size={14} />
+              Tips for Success
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showTips ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {showTips && (
+              <div className="mt-1 rounded-xl bg-[var(--fl-bg-secondary)] p-4">
+                <div className="space-y-3">
+                  {[
+                    {
+                      title: 'Start after dinner',
+                      detail: 'Most people finish eating around 7–8pm and start their fast. You sleep through 7–8 hours of it — that\'s the cheat code.',
+                    },
+                    {
+                      title: 'Finish eating 2–3 hours before bed',
+                      detail: 'This improves sleep quality and digestion. Your body can focus on repair instead of processing food.',
+                    },
+                    {
+                      title: 'Ease into it',
+                      detail: 'New to fasting? Start with 12 hours and work up to 16 over a week or two. The first few days are the hardest — it gets easier.',
+                    },
+                    {
+                      title: 'Break your fast gently',
+                      detail: 'Start with something light — fruit, yogurt, or eggs. Save the bigger meal for an hour later.',
+                    },
+                    {
+                      title: 'This is a daily routine',
+                      detail: 'IF works best as a lifestyle, not a one-time thing. Most people fast daily (16:8) and eat normally during their window — no special diet needed.',
+                    },
+                    {
+                      title: 'Stay hydrated during fasting',
+                      detail: 'Water, black coffee, and plain tea are all fine and won\'t break your fast. Use the water tracker to stay on top of it.',
+                    },
+                  ].map((tip) => (
+                    <div key={tip.title} className="flex gap-3">
+                      <span className="mt-0.5 text-[var(--fl-primary)]">•</span>
+                      <div>
+                        <p className="text-[var(--fl-text-sm)] font-semibold text-[var(--fl-text)]">
+                          {tip.title}
+                        </p>
+                        <p className="mt-0.5 text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
+                          {tip.detail}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
