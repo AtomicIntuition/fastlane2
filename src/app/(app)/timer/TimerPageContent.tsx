@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame } from 'lucide-react'
@@ -56,8 +56,10 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showLearnMore, setShowLearnMore] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showTips, setShowTips] = useState(false)
-  const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
+  const [activeBenefit, setActiveBenefit] = useState<string | null>('fat-burning')
   const [showEndConfirm, setShowEndConfirm] = useState(false)
+  const benefitCycleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const benefitIds = useRef(['fat-burning', 'mental-clarity', 'cell-repair', 'longevity'])
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -76,6 +78,28 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   }
 
   const isActive = timer.isActive
+
+  // Auto-cycle benefits every 5 seconds (idle state only)
+  useEffect(() => {
+    if (isActive) return
+    function cycle() {
+      setActiveBenefit((prev) => {
+        const ids = benefitIds.current
+        const idx = prev ? ids.indexOf(prev) : -1
+        return ids[(idx + 1) % ids.length]
+      })
+      benefitCycleTimer.current = setTimeout(cycle, 5000)
+    }
+    benefitCycleTimer.current = setTimeout(cycle, 5000)
+    return () => {
+      if (benefitCycleTimer.current) clearTimeout(benefitCycleTimer.current)
+    }
+  }, [isActive])
+
+  const handleBenefitTap = useCallback((id: string) => {
+    if (benefitCycleTimer.current) clearTimeout(benefitCycleTimer.current)
+    setActiveBenefit((prev) => (prev === id ? null : id))
+  }, [])
 
   /* ---------------------------------------------------------------- */
   /*  Handlers — guest uses local store, auth users use API            */
@@ -223,9 +247,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   return (
     <div className="mx-auto max-w-lg lg:max-w-5xl">
       {isActive ? (
-        <div className="flex flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
+        <div className="flex flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
           {/* Left column on desktop: timer + status + actions */}
-          <div className="flex flex-col items-center gap-4 lg:sticky lg:top-4">
+          <div className="flex flex-col items-center gap-4">
           {/* Timer Ring with End Fast inside */}
           <TimerRing
             progress={timer.progress}
@@ -311,7 +335,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </div>{/* end left column */}
 
           {/* Right column on desktop: Body State Timeline */}
-          <div className="w-full">
+          <div className="w-full lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:rounded-2xl lg:bg-[var(--fl-bg-secondary)]/50 lg:p-6">
             <BodyStateTimeline
               elapsedHours={elapsedHours}
               fastingHours={timerStore.fastingHours ?? 16}
@@ -399,9 +423,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-8 pt-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-12">
+        <div className="flex flex-col items-center gap-8 pt-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
           {/* Left column: brand, headline, timer preview, protocol, start */}
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center gap-8 lg:py-8">
           {/* Brand mark */}
           <div className="flex items-center gap-2.5">
             <Image src="/icon.png" alt="Unfed" width={36} height={36} className="rounded-xl" priority />
@@ -538,7 +562,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                     <button
                       key={b.id}
                       type="button"
-                      onClick={() => setActiveBenefit(activeBenefit === b.id ? null : b.id)}
+                      onClick={() => handleBenefitTap(b.id)}
                       className={`inline-flex h-9 items-center gap-2 rounded-full pr-3.5 text-[var(--fl-text-xs)] font-medium whitespace-nowrap transition-colors ${activeBenefit === b.id ? 'bg-[var(--fl-primary)] text-white' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)] hover:bg-[var(--fl-bg-tertiary)]'}`}
                     >
                       <Image src={b.icon} alt={b.label} width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
