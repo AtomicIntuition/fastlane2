@@ -55,9 +55,13 @@ export function BodyStateTimeline({
   fastingHours,
   className,
 }: BodyStateTimelineProps) {
-  // Show states relevant to this fast + 12h buffer
-  const maxHour = fastingHours + 12
-  const visibleStates = BODY_STATES.filter((s) => s.startHour < maxHour)
+  // Show states reachable within this protocol + the next one as a teaser
+  const reachableStates = BODY_STATES.filter((s) => s.startHour < fastingHours)
+  const nextStateIdx = reachableStates.length
+  const visibleStates = nextStateIdx < BODY_STATES.length
+    ? [...reachableStates, BODY_STATES[nextStateIdx]]
+    : reachableStates
+  const maxHour = fastingHours
 
   return (
     <div className={cn('flex flex-col', className)}>

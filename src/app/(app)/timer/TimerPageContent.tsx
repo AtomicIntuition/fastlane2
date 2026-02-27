@@ -183,7 +183,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             isActive
           />
 
-          <BodyStateCard elapsedHours={elapsedHours} className="w-full" />
+          <BodyStateCard elapsedHours={elapsedHours} fastingHours={timerStore.fastingHours ?? 16} className="w-full" />
 
           {/* Water tracking */}
           <div className="flex flex-col items-center gap-1">

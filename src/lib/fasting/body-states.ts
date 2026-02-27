@@ -14,21 +14,21 @@ export interface BodyState {
 export const BODY_STATES: BodyState[] = [
   {
     id: 'anabolic',
-    name: 'Anabolic',
+    name: 'Fed State',
     emoji: '🍽️',
     startHour: 0,
     endHour: 4,
     description:
-      'Your body is digesting food, absorbing nutrients, and storing energy. Blood sugar and insulin levels are elevated.',
+      'Your body is digesting your last meal. Blood sugar and insulin are elevated — totally normal, this is where every fast begins.',
   },
   {
     id: 'catabolic',
-    name: 'Catabolic',
+    name: 'Transition',
     emoji: '🔄',
     startHour: 4,
     endHour: 8,
     description:
-      'Insulin levels are dropping. Your body begins transitioning from using glucose to tapping into glycogen stores.',
+      'Insulin is dropping and your body is switching fuel sources. You\'re probably sleeping through this part!',
   },
   {
     id: 'fat-burning',
@@ -37,7 +37,7 @@ export const BODY_STATES: BodyState[] = [
     startHour: 8,
     endHour: 12,
     description:
-      'Glycogen stores are depleting. Your body increasingly relies on fat oxidation for energy.',
+      'Your body is now burning stored fat for energy. This is where the magic starts — you\'re in the zone.',
   },
   {
     id: 'ketosis',
@@ -46,25 +46,25 @@ export const BODY_STATES: BodyState[] = [
     startHour: 12,
     endHour: 14,
     description:
-      'Your liver is producing ketone bodies from fatty acids. Mental clarity and sustained energy improve.',
+      'Ketones are fueling your brain. Many people feel sharper focus and steady energy during this phase.',
   },
   {
     id: 'autophagy',
-    name: 'Autophagy',
+    name: 'Cell Repair',
     emoji: '♻️',
     startHour: 14,
     endHour: 16,
     description:
-      'Cellular recycling activates. Damaged proteins and organelles are broken down and reused.',
+      'Your cells are cleaning house — recycling damaged parts and repairing themselves. This is the sweet spot for 16:8 fasters.',
   },
   {
     id: 'deep-autophagy',
-    name: 'Deep Autophagy',
+    name: 'Deep Repair',
     emoji: '🧬',
     startHour: 16,
     endHour: 24,
     description:
-      'Autophagy intensifies. Growth hormone increases significantly, supporting fat metabolism and tissue repair.',
+      'Cell repair intensifies and growth hormone rises. You\'re going beyond the standard window — great for occasional extended fasts.',
   },
   {
     id: 'immune-reset',
@@ -73,16 +73,16 @@ export const BODY_STATES: BodyState[] = [
     startHour: 24,
     endHour: 48,
     description:
-      'Extended fasting triggers immune cell regeneration. Old immune cells are recycled and replaced with new ones.',
+      'Your immune system regenerates old cells. This is an advanced extended fast — not for daily use. Consult a doctor first.',
   },
   {
     id: 'stem-cell',
-    name: 'Stem Cell',
+    name: 'Deep Renewal',
     emoji: '🌱',
     startHour: 48,
     endHour: 72,
     description:
-      'Stem cell-based regeneration is activated. The body enters a deep renewal state affecting multiple organ systems.',
+      'Stem cell regeneration activates. This is an advanced multi-day fast — only for experienced fasters under medical guidance.',
   },
 ]
 

@@ -9,6 +9,8 @@ import {
 export interface BodyStateCardProps {
   /** Hours elapsed since the fast started */
   elapsedHours: number
+  /** Total fasting hours for the protocol (used to limit next-state display) */
+  fastingHours?: number
   /** Extra class names */
   className?: string
 }
@@ -23,10 +25,12 @@ function formatTimeUntil(hours: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
-export function BodyStateCard({ elapsedHours, className }: BodyStateCardProps) {
+export function BodyStateCard({ elapsedHours, fastingHours, className }: BodyStateCardProps) {
   const current = getCurrentBodyState(elapsedHours)
-  const next = getNextBodyState(elapsedHours)
+  const rawNext = getNextBodyState(elapsedHours)
 
+  // Only show next state if it's reachable within the protocol window
+  const next = rawNext && fastingHours != null && rawNext.startHour > fastingHours ? null : rawNext
   const timeUntilNext = next ? next.startHour - elapsedHours : null
 
   return (
