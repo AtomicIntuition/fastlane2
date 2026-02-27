@@ -462,6 +462,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         </div>
       )}
 
+      {/* Divider */}
+      <div className="mt-8 flex w-full items-center gap-4 px-2">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
+        <span className="text-[11px] font-medium uppercase tracking-widest text-[var(--fl-text-tertiary)]">
+          Learn
+        </span>
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
+      </div>
+
       {/* ── Educational content (always visible) ──────────── */}
       <div className="mt-6 flex flex-col items-center gap-6">
         {/* Benefit pills */}
