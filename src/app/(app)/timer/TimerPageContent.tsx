@@ -265,7 +265,10 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             Intermittent Fasting
           </h1>
 
-          {/* Protocol chip */}
+          {/* Protocol selection */}
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+            Choose your fasting schedule
+          </p>
           {selectedProtocolInfo && !showProtocols && (
             <button
               type="button"
