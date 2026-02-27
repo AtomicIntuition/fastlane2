@@ -580,12 +580,12 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                   ))}
                 </div>
 
-                {/* Fixed-height container prevents layout shift when cycling */}
-                <div className="relative w-full min-h-[180px]">
+                {/* Grid overlay: all cards share one cell so the tallest sets the height */}
+                <div className="grid w-full [&>*]:col-start-1 [&>*]:row-start-1">
                   {benefits.map((benefit) => (
                     <div
                       key={benefit.id}
-                      className={`absolute inset-0 rounded-xl bg-[var(--fl-bg-secondary)] p-4 transition-opacity duration-300 ${activeBenefit === benefit.id ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                      className={`rounded-xl bg-[var(--fl-bg-secondary)] p-4 transition-opacity duration-300 ${activeBenefit === benefit.id ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <Image src={benefit.icon} alt={benefit.label} width={40} height={40} className="rounded-full" />
