@@ -76,4 +76,17 @@ describe('POST /api/fasting/extend', () => {
     const res = await POST(req)
     expect(res.status).toBe(200)
   })
+
+  it('returns 200 for negative additionalHours (reduce)', async () => {
+    mocks.auth.mockResolvedValue({ user: { id: 'u1' } })
+    mocks.extendFast.mockResolvedValue({ id: 's1', fastingHours: 16 })
+    const { POST } = await import('../route')
+    const req = new Request('http://localhost/api/fasting/extend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: 's1', additionalHours: -1 }),
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(200)
+  })
 })

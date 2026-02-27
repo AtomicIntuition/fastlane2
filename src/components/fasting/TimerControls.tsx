@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, Square, Clock, X, Flame, AlertTriangle } from 'lucide-react'
+import { Play, Square, Clock, Minus, X, Flame, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
@@ -20,8 +20,12 @@ export interface TimerControlsProps {
   onComplete: () => void
   /** Called to extend the fast by 1 hour */
   onExtend: () => void
+  /** Called to reduce the fast by 1 hour (undo an extension) */
+  onReduce?: () => void
   /** Called to cancel the current fast */
   onCancel: () => void
+  /** Number of hours added via extensions (shows -1h when > 0) */
+  extendedHours?: number
   /** Elapsed fasting hours (used for body-state-aware end dialog) */
   elapsedHours?: number
   /** Extra class names for the root element */
@@ -63,7 +67,9 @@ export function TimerControls({
   onStart,
   onComplete,
   onExtend,
+  onReduce,
   onCancel,
+  extendedHours = 0,
   elapsedHours,
   className,
 }: TimerControlsProps) {
@@ -117,6 +123,18 @@ export function TimerControls({
         >
           End Fast
         </Button>
+
+        {/* Reduce -1h (only when extensions have been added) */}
+        {extendedHours > 0 && onReduce && (
+          <Button
+            variant="outline"
+            size="md"
+            onClick={onReduce}
+            leftIcon={<Minus size={16} />}
+          >
+            −1h
+          </Button>
+        )}
 
         {/* Extend +1h */}
         <Button

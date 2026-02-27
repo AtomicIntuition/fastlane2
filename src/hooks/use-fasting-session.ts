@@ -204,6 +204,8 @@ export function useCancelFast() {
 export function useExtendFast() {
   const queryClient = useQueryClient()
   const updateTarget = useTimerStore((s) => s.updateTarget)
+  const addExtendedHour = useTimerStore((s) => s.addExtendedHour)
+  const removeExtendedHour = useTimerStore((s) => s.removeExtendedHour)
 
   return useMutation({
     mutationFn: ({
@@ -217,15 +219,23 @@ export function useExtendFast() {
         sessionId,
         additionalHours,
       }),
-    onSuccess: (session) => {
+    onSuccess: (session, variables) => {
       updateTarget(session.targetEndAt, session.fastingHours)
+      if (variables.additionalHours > 0) {
+        addExtendedHour()
+        toast.success('Fast extended!', {
+          description: `New target: ${session.fastingHours}h`,
+        })
+      } else {
+        removeExtendedHour()
+        toast.success('Extension removed', {
+          description: `Back to ${session.fastingHours}h`,
+        })
+      }
       queryClient.invalidateQueries({ queryKey: fastingKeys.all })
-      toast.success('Fast extended!', {
-        description: `New target: ${session.fastingHours}h`,
-      })
     },
     onError: (error: Error) => {
-      toast.error('Could not extend fast', {
+      toast.error('Could not update fast', {
         description: error.message,
       })
     },

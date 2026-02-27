@@ -30,11 +30,12 @@ export async function POST(request: Request) {
     if (
       additionalHours === undefined ||
       typeof additionalHours !== 'number' ||
-      additionalHours <= 0 ||
+      additionalHours === 0 ||
+      additionalHours < -24 ||
       additionalHours > 24
     ) {
       return NextResponse.json(
-        { error: 'additionalHours must be a number between 1 and 24' },
+        { error: 'additionalHours must be a non-zero number between -24 and 24' },
         { status: 400 },
       )
     }

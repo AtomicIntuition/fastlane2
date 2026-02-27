@@ -129,10 +129,26 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         timerStore.targetEndAt + 3_600_000,
         timerStore.fastingHours + 1,
       )
+      timerStore.addExtendedHour()
       return
     }
     if (!timer.sessionId) return
     extendFast.mutate({ sessionId: timer.sessionId, additionalHours: 1 })
+  }, [isGuest, timerStore, timer.sessionId, extendFast])
+
+  const handleReduce = useCallback(() => {
+    if (timerStore.extendedHours <= 0) return
+    if (isGuest) {
+      if (!timerStore.targetEndAt || !timerStore.fastingHours) return
+      timerStore.updateTarget(
+        timerStore.targetEndAt - 3_600_000,
+        timerStore.fastingHours - 1,
+      )
+      timerStore.removeExtendedHour()
+      return
+    }
+    if (!timer.sessionId) return
+    extendFast.mutate({ sessionId: timer.sessionId, additionalHours: -1 })
   }, [isGuest, timerStore, timer.sessionId, extendFast])
 
   const handleAddWater = useCallback(() => {
@@ -217,7 +233,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             onStart={handleStart}
             onComplete={handleComplete}
             onExtend={handleExtend}
+            onReduce={handleReduce}
             onCancel={handleCancel}
+            extendedHours={timerStore.extendedHours}
             elapsedHours={elapsedHours}
           />
 
