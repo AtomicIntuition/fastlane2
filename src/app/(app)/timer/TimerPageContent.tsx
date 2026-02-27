@@ -423,16 +423,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-5 pt-2 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)] lg:pt-4">
-          {/* Left column: brand + headline, timer preview, protocol, start */}
-          <div className="flex flex-col items-center gap-5 lg:gap-8 lg:py-8">
-          {/* Brand + Headline — merged */}
+        <div className="flex flex-col items-center gap-6 pt-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
+          {/* Left column: headline, timer preview, protocol, start */}
+          <div className="flex flex-col items-center gap-6 lg:gap-8 lg:py-8">
+          {/* Headline with inline brand */}
           <div className="text-center px-2">
-            <div className="mb-3 flex items-center justify-center gap-2.5">
-              <Image src="/icon.png" alt="Unfed" width={32} height={32} className="rounded-lg" priority />
-              <span className="text-[15px] font-bold text-[var(--fl-text)]">Unfed</span>
-            </div>
             <h1 className="text-[1.75rem] font-black leading-[1.2] tracking-tight text-[var(--fl-text)]">
+              <span className="inline-flex items-center gap-2 align-middle">
+                <Image src="/icon.png" alt="Unfed" width={30} height={30} className="rounded-lg inline-block" priority />
+              </span>{' '}
               Burn fat. Sharpen focus.
               <br />
               Live longer.
@@ -443,7 +442,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </div>
 
           {/* Timer preview — shows the product in action */}
-          <div className="pointer-events-none select-none scale-[0.85] lg:scale-100 -my-2 lg:my-0">
+          <div className="pointer-events-none select-none">
             <TimerRing
               progress={0.62}
               hours={6}
