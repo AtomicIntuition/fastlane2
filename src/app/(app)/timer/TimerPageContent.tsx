@@ -301,16 +301,16 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </div>
           )}
 
-          {/* Pulsing START FAST button */}
+          {/* START FAST button — soft 3D, high contrast */}
           <div className="relative flex items-center justify-center">
-            {/* Outer glow halo */}
-            <span className="start-btn-glow absolute -inset-5 rounded-full bg-gradient-to-br from-blue-500/40 via-violet-500/40 to-amber-500/40 blur-xl" />
+            {/* Soft glow halo */}
+            <span className="start-btn-glow absolute -inset-6 rounded-full bg-white/30 blur-2xl" />
             <button
               type="button"
               onClick={handleStart}
-              className="start-btn-breathe relative flex h-[180px] w-[180px] items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 text-white shadow-[0_0_40px_rgba(139,92,246,0.4)] transition-shadow duration-300 hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] active:scale-95"
+              className="start-btn-breathe relative flex h-[180px] w-[180px] items-center justify-center rounded-full bg-gradient-to-b from-white to-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.25),0_2px_4px_rgba(0,0,0,0.1),inset_0_2px_0_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] transition-all duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.3),0_2px_4px_rgba(0,0,0,0.12),inset_0_2px_0_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] hover:from-white hover:to-gray-50 active:scale-[0.97] active:shadow-[0_4px_15px_rgba(0,0,0,0.2),0_1px_2px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.8),inset_0_-1px_3px_rgba(0,0,0,0.08)]"
             >
-              <span className="relative text-xl font-bold uppercase tracking-widest">
+              <span className="relative text-xl font-bold uppercase tracking-widest text-gray-800">
                 Start<br />Fast
               </span>
             </button>
