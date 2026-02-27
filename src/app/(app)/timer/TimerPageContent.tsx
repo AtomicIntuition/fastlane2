@@ -25,19 +25,22 @@ import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm
 import { Dialog } from '@/components/ui/Dialog'
 import { getProtocol, type FastingProtocol } from '@/lib/fasting/protocols'
 import { formatDuration } from '@/lib/utils/dates'
+import { generateId } from '@/lib/utils/id'
 
 interface TimerPageContentProps {
   initialActiveSession: FastingSessionData | null
 }
 
 export function TimerPageContent({ initialActiveSession }: TimerPageContentProps) {
-  const { planId } = useApp()
+  const { user, planId } = useApp()
   const isPro = planId === 'pro'
+  const isGuest = !user
   const router = useRouter()
 
   const timer = useTimer()
   const timerStore = useTimerStore()
 
+  // API hooks — only used for logged-in users
   const startFast = useStartFast()
   const completeFast = useCompleteFast()
   const cancelFast = useCancelFast()
@@ -50,7 +53,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
   const [showProtocols, setShowProtocols] = useState(false)
 
-  // Hydrate timer store from server data
+  // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
     timerStore.startTimer({
       id: initialActiveSession.id,
@@ -60,7 +63,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       fastingHours: initialActiveSession.fastingHours,
       eatingHours: initialActiveSession.eatingHours,
     })
-    // Restore water count from DB
     const serverWater = initialActiveSession.waterGlasses ?? 0
     if (serverWater > 0) {
       for (let i = 0; i < serverWater; i++) timerStore.addWater()
@@ -69,12 +71,35 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
 
   const isActive = timer.isActive
 
+  /* ---------------------------------------------------------------- */
+  /*  Handlers — guest uses local store, auth users use API            */
+  /* ---------------------------------------------------------------- */
+
   const handleStart = useCallback(() => {
     if (!selectedProtocol) return
-    startFast.mutate(selectedProtocol)
-  }, [selectedProtocol, startFast])
+
+    if (isGuest) {
+      const protocol = getProtocol(selectedProtocol)
+      if (!protocol) return
+      const now = Date.now()
+      timerStore.startTimer({
+        id: generateId(),
+        protocol: protocol.id,
+        startedAt: now,
+        targetEndAt: now + protocol.fastingHours * 60 * 60 * 1000,
+        fastingHours: protocol.fastingHours,
+        eatingHours: protocol.eatingHours,
+      })
+    } else {
+      startFast.mutate(selectedProtocol)
+    }
+  }, [selectedProtocol, isGuest, timerStore, startFast])
 
   const handleComplete = useCallback(() => {
+    if (isGuest) {
+      timerStore.clear()
+      return
+    }
     if (!timer.sessionId) return
     const sid = timer.sessionId
     completeFast.mutate(sid, {
@@ -83,17 +108,37 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         setShowCheckin(true)
       },
     })
-  }, [timer.sessionId, completeFast])
+  }, [isGuest, timer.sessionId, timerStore, completeFast])
 
   const handleCancel = useCallback(() => {
+    if (isGuest) {
+      timerStore.clear()
+      return
+    }
     if (!timer.sessionId) return
     cancelFast.mutate(timer.sessionId)
-  }, [timer.sessionId, cancelFast])
+  }, [isGuest, timer.sessionId, timerStore, cancelFast])
 
   const handleExtend = useCallback(() => {
+    if (isGuest) {
+      if (!timerStore.targetEndAt || !timerStore.fastingHours) return
+      timerStore.updateTarget(
+        timerStore.targetEndAt + 3_600_000,
+        timerStore.fastingHours + 1,
+      )
+      return
+    }
     if (!timer.sessionId) return
     extendFast.mutate({ sessionId: timer.sessionId, additionalHours: 1 })
-  }, [timer.sessionId, extendFast])
+  }, [isGuest, timerStore, timer.sessionId, extendFast])
+
+  const handleAddWater = useCallback(() => {
+    if (isGuest) {
+      timerStore.addWater()
+      return
+    }
+    if (timer.sessionId) addWater.mutate(timer.sessionId)
+  }, [isGuest, timerStore, timer.sessionId, addWater])
 
   const handleProtocolSelect = useCallback((protocol: FastingProtocol) => {
     setSelectedProtocol(protocol.id)
@@ -141,7 +186,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           {/* Water tracking */}
           <button
             type="button"
-            onClick={() => timer.sessionId && addWater.mutate(timer.sessionId)}
+            onClick={handleAddWater}
             className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50"
           >
             <Droplet size={18} />
@@ -175,6 +220,16 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               fastingHours={timerStore.fastingHours ?? 16}
             />
           </div>
+
+          {/* Sign-up nudge for guests */}
+          {isGuest && (
+            <p className="text-center text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+              <a href="/register" className="underline hover:text-[var(--fl-text-secondary)]">
+                Create an account
+              </a>{' '}
+              to save your progress
+            </p>
+          )}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-8 pt-8">
@@ -238,17 +293,20 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         </div>
       )}
 
-      <Dialog
-        open={showCheckin}
-        onClose={() => {
-          setShowCheckin(false)
-          setCompletedSessionId(null)
-        }}
-        title="How are you feeling?"
-        description="Log a quick check-in after your fast."
-      >
-        <CheckinForm onSubmit={handleCheckinSubmit} />
-      </Dialog>
+      {/* Check-in dialog (logged-in users only) */}
+      {!isGuest && (
+        <Dialog
+          open={showCheckin}
+          onClose={() => {
+            setShowCheckin(false)
+            setCompletedSessionId(null)
+          }}
+          title="How are you feeling?"
+          description="Log a quick check-in after your fast."
+        >
+          <CheckinForm onSubmit={handleCheckinSubmit} />
+        </Dialog>
+      )}
     </div>
   )
 }
