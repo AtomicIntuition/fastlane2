@@ -8,23 +8,24 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
-      const isAppRoute = nextUrl.pathname.startsWith('/dashboard') ||
-        nextUrl.pathname.startsWith('/timer') ||
-        nextUrl.pathname.startsWith('/history') ||
-        nextUrl.pathname.startsWith('/stats') ||
+
+      // Only these routes strictly require authentication
+      const isProtectedRoute =
         nextUrl.pathname.startsWith('/settings') ||
-        nextUrl.pathname.startsWith('/upgrade') ||
+        nextUrl.pathname.startsWith('/admin') ||
         nextUrl.pathname.startsWith('/onboarding')
-      const isAuthRoute = nextUrl.pathname.startsWith('/login') ||
+
+      const isAuthRoute =
+        nextUrl.pathname.startsWith('/login') ||
         nextUrl.pathname.startsWith('/register')
 
-      if (isAppRoute) {
+      if (isProtectedRoute) {
         if (isLoggedIn) return true
         return false // Redirect to login
       }
 
       if (isAuthRoute && isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl))
+        return Response.redirect(new URL('/timer', nextUrl))
       }
 
       return true

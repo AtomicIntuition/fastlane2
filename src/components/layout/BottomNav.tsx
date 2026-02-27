@@ -30,7 +30,7 @@ const NAV_ITEMS: NavItem[] = [
 ]
 
 const GUEST_NAV_ITEMS: NavItem[] = [
-  { label: 'Timer', href: '/', icon: Timer },
+  { label: 'Timer', href: '/timer', icon: Timer },
   { label: 'History', href: '/history', icon: CalendarDays },
   { label: 'Insights', href: '/stats', icon: TrendingUp },
   { label: 'Upgrade', href: '/register', icon: Sparkles },
@@ -52,7 +52,9 @@ export function BottomNav({ guest = false }: BottomNavProps) {
   return (
     <nav
       className={cn(
-        'fixed inset-x-0 bottom-0 z-[var(--fl-z-sticky)] lg:hidden',
+        'fixed inset-x-0 bottom-0 z-[var(--fl-z-sticky)]',
+        // On desktop, hide when sidebar is present (logged-in users)
+        !guest && 'lg:hidden',
         'border-t border-[var(--fl-border)] bg-[var(--fl-bg)]/95 backdrop-blur-sm',
         // Safe area for notched phones (iOS)
         'pb-[env(safe-area-inset-bottom)]',
