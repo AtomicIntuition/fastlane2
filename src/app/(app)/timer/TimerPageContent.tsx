@@ -264,31 +264,22 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             Intermittent Fasting
           </h1>
 
-          {/* App icon + protocol chip (inline row) */}
-          <div className="flex items-center gap-3">
-            <Image
-              src="/icon.png"
-              alt="FastLane"
-              width={40}
-              height={40}
-              className="rounded-xl"
-            />
-            {selectedProtocolInfo && !showProtocols && (
-              <button
-                type="button"
-                onClick={() => setShowProtocols(true)}
-                className={`flex items-center gap-2 rounded-[var(--fl-radius-lg)] border px-4 py-2.5 transition-colors ${isGuest ? 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20' : 'border-[var(--fl-border)] bg-[var(--fl-bg)] hover:border-[var(--fl-border-hover)]'}`}
-              >
-                <span className={`text-[var(--fl-text-sm)] font-bold ${isGuest ? 'text-white' : 'text-[var(--fl-primary)]'}`}>
-                  {selectedProtocolInfo.name}
-                </span>
-                <span className={`text-[var(--fl-text-xs)] ${isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'}`}>
-                  {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
-                </span>
-                <ChevronDown size={14} className={isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'} />
-              </button>
-            )}
-          </div>
+          {/* Protocol chip */}
+          {selectedProtocolInfo && !showProtocols && (
+            <button
+              type="button"
+              onClick={() => setShowProtocols(true)}
+              className={`flex items-center gap-2 rounded-[var(--fl-radius-lg)] border px-4 py-2.5 transition-colors ${isGuest ? 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20' : 'border-[var(--fl-border)] bg-[var(--fl-bg)] hover:border-[var(--fl-border-hover)]'}`}
+            >
+              <span className={`text-[var(--fl-text-sm)] font-bold ${isGuest ? 'text-white' : 'text-[var(--fl-primary)]'}`}>
+                {selectedProtocolInfo.name}
+              </span>
+              <span className={`text-[var(--fl-text-xs)] ${isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'}`}>
+                {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
+              </span>
+              <ChevronDown size={14} className={isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'} />
+            </button>
+          )}
 
           {/* Protocol picker (toggleable) */}
           {showProtocols && (
@@ -301,16 +292,24 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </div>
           )}
 
-          {/* START FAST button — soft 3D, high contrast */}
+          {/* START FAST button — app icon as the button */}
           <div className="relative flex items-center justify-center">
             {/* Soft glow halo */}
-            <span className="start-btn-glow absolute -inset-6 rounded-full bg-white/30 blur-2xl" />
+            <span className="start-btn-glow absolute -inset-6 rounded-full bg-white/25 blur-2xl" />
             <button
               type="button"
               onClick={handleStart}
-              className="start-btn-breathe relative flex h-[180px] w-[180px] items-center justify-center rounded-full bg-gradient-to-b from-white to-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.25),0_2px_4px_rgba(0,0,0,0.1),inset_0_2px_0_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] transition-all duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.3),0_2px_4px_rgba(0,0,0,0.12),inset_0_2px_0_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] hover:from-white hover:to-gray-50 active:scale-[0.97] active:shadow-[0_4px_15px_rgba(0,0,0,0.2),0_1px_2px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.8),inset_0_-1px_3px_rgba(0,0,0,0.08)]"
+              className="start-btn-breathe relative flex h-[200px] w-[200px] items-center justify-center rounded-full transition-all duration-200 active:scale-[0.96]"
             >
-              <span className="relative text-xl font-bold uppercase tracking-widest text-gray-800">
+              <Image
+                src="/icon.png"
+                alt="Start Fast"
+                width={200}
+                height={200}
+                className="absolute inset-0 h-full w-full rounded-full object-cover drop-shadow-[0_8px_30px_rgba(0,0,0,0.3)]"
+                priority
+              />
+              <span className="relative text-xl font-bold uppercase tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                 Start<br />Fast
               </span>
             </button>
