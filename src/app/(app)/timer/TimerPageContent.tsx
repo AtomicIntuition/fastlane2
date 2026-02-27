@@ -20,7 +20,6 @@ import { useApp } from '@/components/layout/AppShell'
 import { TimerRing } from '@/components/fasting/TimerRing'
 import { TimerControls } from '@/components/fasting/TimerControls'
 import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
-import { BodyStateCard } from '@/components/fasting/BodyStateCard'
 import { BodyStateTimeline } from '@/components/fasting/BodyStateTimeline'
 import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
 import { Button } from '@/components/ui/Button'
@@ -60,7 +59,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showTips, setShowTips] = useState(false)
   const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
-  const [showTimeline, setShowTimeline] = useState(true)
   const [showEndConfirm, setShowEndConfirm] = useState(false)
 
   // Hydrate timer store from server data (logged-in users only)
@@ -228,13 +226,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
     <div className="mx-auto max-w-lg">
       {isActive ? (
         <div className="flex flex-col items-center gap-4">
-          {/* Body State Card — top for context */}
-          <BodyStateCard
-            elapsedHours={elapsedHours}
-            fastingHours={timerStore.fastingHours ?? 16}
-            className="w-full"
-          />
-
           {/* Timer Ring with End Fast inside */}
           <TimerRing
             progress={timer.progress}
@@ -308,25 +299,12 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </p>
           </div>
 
-          {/* Collapsible Body State Timeline */}
+          {/* Body State Timeline */}
           <div className="w-full">
-            <button
-              type="button"
-              onClick={() => setShowTimeline(!showTimeline)}
-              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
-            >
-              Body State Timeline
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${showTimeline ? 'rotate-180' : ''}`}
-              />
-            </button>
-            {showTimeline && (
-              <BodyStateTimeline
-                elapsedHours={elapsedHours}
-                fastingHours={timerStore.fastingHours ?? 16}
-              />
-            )}
+            <BodyStateTimeline
+              elapsedHours={elapsedHours}
+              fastingHours={timerStore.fastingHours ?? 16}
+            />
           </div>
 
           {/* Sign-up nudge for guests */}

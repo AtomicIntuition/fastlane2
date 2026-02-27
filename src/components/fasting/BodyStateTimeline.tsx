@@ -1,5 +1,6 @@
 'use client'
 
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import {
   BODY_STATES,
@@ -29,25 +30,11 @@ function getStatus(state: BodyState, elapsedHours: number, maxHour: number): Sta
 function formatTimeHint(hours: number): string {
   if (hours < 1) {
     const mins = Math.max(1, Math.round(hours * 60))
-    return `in ${mins}m`
+    return `${mins}m`
   }
   const h = Math.floor(hours)
   const m = Math.round((hours - h) * 60)
-  return m > 0 ? `in ${h}h ${m}m` : `in ${h}h`
-}
-
-const dotStyles: Record<StateStatus, string> = {
-  passed: 'bg-[var(--fl-success)] border-[var(--fl-success)]',
-  current: 'bg-[var(--fl-primary)] border-[var(--fl-primary)] ring-4 ring-[var(--fl-primary)]/20',
-  future: 'bg-[var(--fl-bg-tertiary)] border-[var(--fl-border)]',
-  unreachable: 'bg-[var(--fl-bg-tertiary)] border-[var(--fl-border)] opacity-40',
-}
-
-const lineStyles: Record<StateStatus, string> = {
-  passed: 'bg-[var(--fl-success)]',
-  current: 'bg-[var(--fl-primary)]',
-  future: 'bg-[var(--fl-border)]',
-  unreachable: 'bg-[var(--fl-border)] opacity-40',
+  return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
 export function BodyStateTimeline({
@@ -71,57 +58,81 @@ export function BodyStateTimeline({
         const timeUntil = state.startHour - elapsedHours
 
         return (
-          <div key={state.id} className="flex gap-3">
-            {/* Dot + Line column */}
+          <div key={state.id} className="flex gap-3.5">
+            {/* Indicator + Line column */}
             <div className="flex flex-col items-center">
-              <div
-                className={cn(
-                  'h-3 w-3 shrink-0 rounded-full border-2 transition-all',
-                  dotStyles[status],
-                  status === 'current' && 'animate-pulse',
-                )}
-              />
+              {/* Passed = checkmark, Current = glowing dot, Future = empty dot */}
+              {status === 'passed' ? (
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--fl-success)]">
+                  <Check size={12} strokeWidth={3} className="text-white" />
+                </div>
+              ) : status === 'current' ? (
+                <div className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-[var(--fl-primary)] opacity-20" style={{ animationDuration: '2s' }} />
+                  <div className="h-3.5 w-3.5 rounded-full border-[3px] border-[var(--fl-primary)] bg-[var(--fl-primary)]" />
+                </div>
+              ) : (
+                <div
+                  className={cn(
+                    'h-5 w-5 shrink-0 rounded-full border-2',
+                    status === 'unreachable'
+                      ? 'border-[var(--fl-border)] opacity-30'
+                      : 'border-[var(--fl-border)] bg-[var(--fl-bg)]',
+                  )}
+                />
+              )}
+
+              {/* Connector line */}
               {!isLast && (
                 <div
                   className={cn(
-                    'w-0.5 flex-1 min-h-[24px]',
-                    lineStyles[status],
+                    'w-0.5 flex-1',
+                    status === 'passed' ? 'bg-[var(--fl-success)]' : 'bg-[var(--fl-border)]',
+                    status === 'unreachable' && 'opacity-30',
                   )}
                 />
               )}
             </div>
 
             {/* Content */}
-            <div className={cn('pb-4', isLast && 'pb-0')}>
-              <div className="flex items-center gap-2">
-                <span className="text-sm" role="img" aria-label={state.name}>
+            <div className={cn('pb-5', isLast && 'pb-0', status === 'current' && 'pb-6')}>
+              {/* State header row */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm leading-none" role="img" aria-label={state.name}>
                   {state.emoji}
                 </span>
                 <span
                   className={cn(
-                    'text-[var(--fl-text-sm)] font-semibold',
+                    'text-[var(--fl-text-sm)] font-semibold leading-tight',
                     status === 'passed' && 'text-[var(--fl-success)]',
-                    status === 'current' && 'text-[var(--fl-primary)]',
+                    status === 'current' && 'text-[var(--fl-text)]',
                     status === 'future' && 'text-[var(--fl-text-secondary)]',
-                    status === 'unreachable' && 'text-[var(--fl-text-tertiary)] opacity-50',
+                    status === 'unreachable' && 'text-[var(--fl-text-tertiary)] opacity-40',
                   )}
                 >
                   {state.name}
                 </span>
-                <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                  {state.startHour}h – {state.endHour}h
+                <span
+                  className={cn(
+                    'text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]',
+                    status === 'unreachable' && 'opacity-40',
+                  )}
+                >
+                  {state.startHour}–{state.endHour}h
                 </span>
               </div>
 
+              {/* Current state — expanded description */}
               {status === 'current' && (
-                <p className="mt-1 text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
+                <p className="mt-1.5 text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
                   {state.description}
                 </p>
               )}
 
+              {/* Future state — time hint */}
               {status === 'future' && timeUntil > 0 && (
-                <p className="mt-0.5 text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                  {formatTimeHint(timeUntil)}
+                <p className="mt-1 text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+                  in {formatTimeHint(timeUntil)}
                 </p>
               )}
             </div>
