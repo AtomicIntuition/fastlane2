@@ -423,7 +423,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-6 pt-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
+        <div className="flex flex-col items-center gap-6 pt-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
           {/* Left column: headline, timer preview, protocol, start */}
           <div className="flex flex-col items-start gap-6 lg:gap-8 lg:py-8">
           {/* Headline + No-food visual */}
@@ -529,7 +529,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </div>
 
           {/* Benefit pills */}
-          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)] text-center lg:text-left">
+          <p className="w-full text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)] text-center">
             Tap to learn about the benefits
           </p>
           {(() => {
