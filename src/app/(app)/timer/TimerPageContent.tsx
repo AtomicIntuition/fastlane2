@@ -322,16 +322,16 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           {/* Benefit pills */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {[
-              { emoji: '🔥', label: 'Fat Burning' },
-              { emoji: '🧠', label: 'Mental Clarity' },
-              { emoji: '♻️', label: 'Cell Repair' },
-              { emoji: '🌱', label: 'Longevity' },
+              { icon: '/icon-fat-burning.png', label: 'Fat Burning' },
+              { icon: '/icon-mental-clarity.png', label: 'Mental Clarity' },
+              { icon: '/icon-cell-repair.png', label: 'Cell Repair' },
+              { icon: '/icon-longevity.png', label: 'Longevity' },
             ].map((b) => (
               <span
                 key={b.label}
                 className="inline-flex items-center gap-1.5 rounded-full bg-[var(--fl-bg-secondary)] px-3 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
               >
-                <span>{b.emoji}</span>
+                <Image src={b.icon} alt={b.label} width={20} height={20} className="rounded-full" />
                 {b.label}
               </span>
             ))}
