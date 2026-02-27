@@ -324,6 +324,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </p>
 
           {/* Benefit pills */}
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+            Tap to learn about the benefits
+          </p>
           {(() => {
             const benefits = [
               {
