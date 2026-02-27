@@ -425,21 +425,40 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       ) : (
         <div className="flex flex-col items-center gap-6 pt-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
           {/* Left column: headline, timer preview, protocol, start */}
-          <div className="flex flex-col items-center gap-6 lg:gap-8 lg:py-8">
-          {/* Headline */}
-          <div className="text-center px-2">
-            <h1 className="text-[1.75rem] font-black leading-[1.2] tracking-tight text-[var(--fl-text)]">
-              Burn fat. Sharpen focus.
-              <br />
-              Live longer.
-            </h1>
-            <p className="mt-2 text-[15px] leading-relaxed text-[var(--fl-text-secondary)]">
-              Stay Unfed. Stay sharp.
-            </p>
+          <div className="flex flex-col items-start gap-6 lg:gap-8 lg:py-8">
+          {/* Headline + No-food visual */}
+          <div className="flex items-center gap-4 w-full px-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-[1.75rem] font-black leading-[1.2] tracking-tight text-[var(--fl-text)]">
+                Burn fat. Sharpen focus.
+                <br />
+                Live longer.
+              </h1>
+              <p className="mt-2 text-[15px] leading-relaxed text-[var(--fl-text-secondary)]">
+                Stay Unfed. Stay sharp.
+              </p>
+            </div>
+            {/* Prohibition plate */}
+            <div className="relative flex-shrink-0 h-20 w-20">
+              <span className="absolute inset-0 flex items-center justify-center text-[2.8rem] leading-none" role="img" aria-label="Plate of food">
+                🍽️
+              </span>
+              <svg viewBox="0 0 80 80" className="absolute inset-0 h-full w-full">
+                <defs>
+                  <linearGradient id="prohibit-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#4158d0" />
+                    <stop offset="50%" stopColor="#c850c0" />
+                    <stop offset="100%" stopColor="#e8963a" />
+                  </linearGradient>
+                </defs>
+                <circle cx="40" cy="40" r="36" fill="none" stroke="url(#prohibit-gradient)" strokeWidth="4" />
+                <line x1="14" y1="14" x2="66" y2="66" stroke="url(#prohibit-gradient)" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </div>
           </div>
 
           {/* Timer preview — shows the product in action */}
-          <div className="pointer-events-none select-none">
+          <div className="pointer-events-none select-none self-center">
             <TimerRing
               progress={0.62}
               hours={6}
@@ -458,7 +477,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             <button
               type="button"
               onClick={() => setShowProtocols(true)}
-              className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
+              className="self-center flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
             >
               <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
                 {selectedProtocolInfo.name}
@@ -481,7 +500,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           )}
 
           {/* Start CTA */}
-          <div className="relative">
+          <div className="relative self-center">
             <div className="start-btn-glow pointer-events-none absolute inset-0 rounded-full bg-[var(--fl-primary)] opacity-0 blur-xl" />
             <button
               type="button"
@@ -492,7 +511,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </button>
           </div>
 
-          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+          <p className="self-center text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
             Free — no account required
           </p>
           </div>{/* end left column */}
