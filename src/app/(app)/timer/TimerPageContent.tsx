@@ -53,6 +53,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
   const [showProtocols, setShowProtocols] = useState(false)
   const [showLearnMore, setShowLearnMore] = useState(false)
+  const [showHowItWorks, setShowHowItWorks] = useState(false)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -238,36 +239,37 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-8 pt-8">
-          {/* App icon */}
-          <div className="text-center">
+        <div className="flex flex-col items-center justify-center gap-6 pt-6">
+          {/* Title */}
+          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--fl-text)]">
+            Intermittent Fasting
+          </h1>
+
+          {/* App icon + protocol chip (inline row) */}
+          <div className="flex items-center gap-3">
             <Image
               src="/icon.png"
               alt="FastLane"
-              width={64}
-              height={64}
-              className="mx-auto rounded-2xl"
+              width={40}
+              height={40}
+              className="rounded-xl"
             />
+            {selectedProtocolInfo && !showProtocols && (
+              <button
+                type="button"
+                onClick={() => setShowProtocols(true)}
+                className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
+              >
+                <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
+                  {selectedProtocolInfo.name}
+                </span>
+                <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
+                  {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
+                </span>
+                <ChevronDown size={14} className="text-[var(--fl-text-tertiary)]" />
+              </button>
+            )}
           </div>
-
-          {/* Selected protocol chip */}
-          {selectedProtocolInfo && !showProtocols && (
-            <button
-              type="button"
-              onClick={() => setShowProtocols(true)}
-              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
-            >
-              <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
-                {selectedProtocolInfo.name}
-              </span>
-              <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
-              </span>
-              <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                Change
-              </span>
-            </button>
-          )}
 
           {/* Protocol picker (toggleable) */}
           {showProtocols && (
@@ -279,33 +281,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               />
             </div>
           )}
-
-          {/* How It Works */}
-          <div className="w-full rounded-2xl bg-[var(--fl-bg-secondary)] p-5">
-            <h3 className="mb-4 text-center text-sm font-semibold text-[var(--fl-text)]">
-              How It Works
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: UtensilsCrossed, step: '1', text: 'Finish your last meal', color: 'text-orange-500' },
-                { icon: Moon, step: '2', text: 'Tap Start — sleep through most of it', color: 'text-violet-500' },
-                { icon: GlassWater, step: '3', text: 'Stay hydrated — water, coffee & tea are OK', color: 'text-blue-500' },
-                { icon: Sun, step: '4', text: 'Timer ends — enjoy your eating window!', color: 'text-amber-500' },
-              ].map((item) => (
-                <div
-                  key={item.step}
-                  className="flex flex-col items-center gap-2 rounded-xl bg-[var(--fl-bg)] p-3 text-center"
-                >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--fl-bg-secondary)]">
-                    <item.icon size={18} className={item.color} />
-                  </div>
-                  <p className="text-[11px] font-medium leading-snug text-[var(--fl-text-secondary)]">
-                    {item.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Pulsing START FAST button */}
           <div className="relative flex items-center justify-center">
@@ -344,7 +319,47 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             ))}
           </div>
 
-          {/* Expandable learn more */}
+          {/* How It Works — accordion (collapsed by default) */}
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={() => setShowHowItWorks(!showHowItWorks)}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
+            >
+              How It Works
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showHowItWorks ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {showHowItWorks && (
+              <div className="mt-1 w-full rounded-2xl bg-[var(--fl-bg-secondary)] p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { icon: UtensilsCrossed, text: 'Finish your last meal', color: 'text-orange-500' },
+                    { icon: Moon, text: 'Tap Start — sleep through most of it', color: 'text-violet-500' },
+                    { icon: GlassWater, text: 'Stay hydrated — water, coffee & tea are OK', color: 'text-blue-500' },
+                    { icon: Sun, text: 'Timer ends — enjoy your eating window!', color: 'text-amber-500' },
+                  ].map((item) => (
+                    <div
+                      key={item.text}
+                      className="flex flex-col items-center gap-2 rounded-xl bg-[var(--fl-bg)] p-3 text-center"
+                    >
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--fl-bg-secondary)]">
+                        <item.icon size={18} className={item.color} />
+                      </div>
+                      <p className="text-[11px] font-medium leading-snug text-[var(--fl-text-secondary)]">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* What is intermittent fasting? — accordion (collapsed by default) */}
           <div className="w-full">
             <button
               type="button"
