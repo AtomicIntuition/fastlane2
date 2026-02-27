@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame, AlertTriangle } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame, AlertTriangle, Home } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -306,6 +307,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               fastingHours={timerStore.fastingHours ?? 16}
             />
           </div>
+
+          {/* Home link */}
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
+          >
+            <Home size={14} />
+            Home
+          </Link>
 
           {/* Sign-up nudge for guests */}
           {isGuest && (
