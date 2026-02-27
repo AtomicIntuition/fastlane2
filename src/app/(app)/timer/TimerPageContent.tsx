@@ -260,8 +260,16 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       ) : (
         <div className="flex flex-col items-center justify-center gap-6 pt-6">
           {/* Title */}
-          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--fl-text)]">
-            Intermittent Fasting
+          <h1
+            className="text-center font-[family-name:var(--font-playfair)] text-[2rem] font-black italic leading-tight tracking-tight"
+            style={{
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #c084fc)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              filter: 'drop-shadow(0 2px 4px rgba(99,102,241,0.15))',
+            }}
+          >
+            Intermittent<br />Fasting
           </h1>
 
           {/* Protocol chip */}
@@ -329,9 +337,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             ].map((b) => (
               <span
                 key={b.label}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--fl-bg-secondary)] px-3 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--fl-bg-secondary)] py-2 pl-2 pr-3.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
               >
-                <Image src={b.icon} alt={b.label} width={20} height={20} className="rounded-full" />
+                <Image src={b.icon} alt={b.label} width={28} height={28} className="rounded-full" />
                 {b.label}
               </span>
             ))}
