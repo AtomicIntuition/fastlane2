@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -45,7 +46,7 @@ export interface BottomNavProps {
   guest?: boolean
 }
 
-export function BottomNav({ guest = false }: BottomNavProps) {
+export const BottomNav = memo(function BottomNav({ guest = false }: BottomNavProps) {
   const pathname = usePathname()
   const items = guest ? GUEST_NAV_ITEMS : NAV_ITEMS
 
@@ -69,10 +70,12 @@ export function BottomNav({ guest = false }: BottomNavProps) {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className={cn(
                 'flex flex-1 flex-col items-center justify-center gap-0.5 py-1',
                 'text-[0.625rem] font-medium leading-tight',
-                'transition-colors duration-[var(--fl-transition-fast)]',
+                'transition-all duration-[var(--fl-transition-fast)]',
+                'active:scale-[0.95]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fl-primary)] focus-visible:rounded-[var(--fl-radius-md)]',
                 isActive
                   ? 'text-[var(--fl-primary)]'
@@ -91,4 +94,4 @@ export function BottomNav({ guest = false }: BottomNavProps) {
       </div>
     </nav>
   )
-}
+})

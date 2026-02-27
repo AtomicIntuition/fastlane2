@@ -39,6 +39,7 @@ export function HomeContent() {
       fastingHours: protocol.fastingHours,
       eatingHours: protocol.eatingHours,
     })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [selectedProtocol, timerStore])
 
   const handleComplete = useCallback(() => {

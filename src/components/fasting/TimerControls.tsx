@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, Square, Clock, Minus, X, Flame, AlertTriangle } from 'lucide-react'
+import { Play, Square, Flame, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
@@ -113,49 +113,26 @@ export function TimerControls({
 
   return (
     <>
-      <div className={cn('flex items-center justify-center gap-3', className)}>
-        {/* End Fast */}
+      <div className={cn('flex w-full flex-col items-center gap-2', className)}>
+        {/* End Fast — full-width primary */}
         <Button
           variant="primary"
-          size="md"
+          size="lg"
+          fullWidth
           onClick={() => setConfirmAction('complete')}
-          leftIcon={<Square size={16} />}
+          leftIcon={<Square size={18} />}
         >
           End Fast
         </Button>
 
-        {/* Reduce -1h (only when extensions have been added) */}
-        {extendedHours > 0 && onReduce && (
-          <Button
-            variant="outline"
-            size="md"
-            onClick={onReduce}
-            leftIcon={<Minus size={16} />}
-          >
-            −1h
-          </Button>
-        )}
-
-        {/* Extend +1h */}
-        <Button
-          variant="outline"
-          size="md"
-          onClick={onExtend}
-          leftIcon={<Clock size={16} />}
-        >
-          +1h
-        </Button>
-
-        {/* Cancel */}
-        <Button
-          variant="ghost"
-          size="md"
+        {/* Cancel — subtle text link */}
+        <button
+          type="button"
           onClick={() => setConfirmAction('cancel')}
-          leftIcon={<X size={16} />}
-          className="text-[var(--fl-danger)] hover:text-[var(--fl-danger)] hover:bg-red-50"
+          className="text-xs text-[var(--fl-text-tertiary)] transition-colors hover:text-[var(--fl-danger)]"
         >
-          Cancel
-        </Button>
+          Cancel fast
+        </button>
       </div>
 
       {/* ── End Fast Dialog ─────────────────────────────── */}

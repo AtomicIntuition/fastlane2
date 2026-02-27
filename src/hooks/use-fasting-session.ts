@@ -62,6 +62,16 @@ async function fetchHistory(): Promise<FastingSessionData[]> {
   return json.data
 }
 
+async function fetchActiveSession(): Promise<FastingSessionData | null> {
+  const res = await fetch('/api/fasting/active')
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? 'Failed to fetch active session')
+  }
+  const json: ApiResponse<FastingSessionData | null> = await res.json()
+  return json.data
+}
+
 async function postFasting<T>(
   endpoint: string,
   body: object,
@@ -89,12 +99,10 @@ async function postFasting<T>(
 export function useActiveSession(initialSession?: FastingSessionData | null) {
   return useQuery({
     queryKey: fastingKeys.active(),
-    queryFn: async (): Promise<FastingSessionData | null> => {
-      const sessions = await fetchHistory()
-      return sessions.find((s) => s.status === 'active') ?? null
-    },
+    queryFn: fetchActiveSession,
     initialData: initialSession ?? undefined,
-    refetchInterval: 30_000, // Poll every 30s to stay in sync
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false,
   })
 }
 
@@ -134,7 +142,7 @@ export function useStartFast() {
         eatingHours: session.eatingHours,
       })
 
-      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
       toast.success('Fast started!', {
         description: `${session.protocol} protocol - ${session.fastingHours}h fast`,
       })
@@ -160,7 +168,8 @@ export function useCompleteFast() {
       postFasting<FastingSessionData>('/api/fasting/complete', { sessionId }),
     onSuccess: () => {
       clear()
-      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.history() })
       toast.success('Fast completed!', {
         description: 'Great job! How are you feeling?',
       })
@@ -186,7 +195,8 @@ export function useCancelFast() {
       postFasting<FastingSessionData>('/api/fasting/cancel', { sessionId }),
     onSuccess: () => {
       clear()
-      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.history() })
       toast.info('Fast cancelled')
     },
     onError: (error: Error) => {
@@ -232,7 +242,7 @@ export function useExtendFast() {
           description: `Back to ${session.fastingHours}h`,
         })
       }
-      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
     },
     onError: (error: Error) => {
       toast.error('Could not update fast', {
@@ -277,9 +287,9 @@ export function useAddWater() {
   return useMutation({
     mutationFn: (sessionId: string) =>
       postFasting<FastingSessionData>('/api/fasting/water', { sessionId }),
-    onSuccess: (session) => {
+    onSuccess: () => {
       addWaterLocal()
-      queryClient.invalidateQueries({ queryKey: fastingKeys.all })
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
     },
     onError: (error: Error) => {
       toast.error('Could not log water', {

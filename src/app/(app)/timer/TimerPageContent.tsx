@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -56,6 +56,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showTips, setShowTips] = useState(false)
   const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
+  const [timelineToggled, setShowTimeline] = useState<boolean | null>(null)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -94,8 +95,11 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         fastingHours: protocol.fastingHours,
         eatingHours: protocol.eatingHours,
       })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
-      startFast.mutate(selectedProtocol)
+      startFast.mutate(selectedProtocol, {
+        onSuccess: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      })
     }
   }, [selectedProtocol, isGuest, timerStore, startFast])
 
@@ -184,51 +188,87 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const protocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
   const selectedProtocolInfo = selectedProtocol ? getProtocol(selectedProtocol) : null
   const elapsedHours = timer.elapsed / 3_600_000
+  // Auto-expand timeline when 4+ hours in; user toggle overrides
+  const showTimeline = timelineToggled ?? elapsedHours >= 4
 
   return (
     <div className="mx-auto max-w-lg">
       {isActive ? (
-        <div className="flex flex-col items-center gap-4">
-          <TimerRing
-            progress={timer.progress}
-            hours={timer.hours}
-            minutes={timer.minutes}
-            seconds={timer.seconds}
-            isComplete={timer.isComplete}
-            isOvertime={timer.isOvertime}
-            overtimeMs={timer.overtimeMs}
-            protocol={protocolInfo?.name ?? timer.protocol}
-            isActive
-          />
-
-          <BodyStateCard elapsedHours={elapsedHours} fastingHours={timerStore.fastingHours ?? 16} className="w-full" />
-
-          {/* Water tracking */}
-          <div className="flex flex-col items-center gap-1">
-            <button
-              type="button"
-              onClick={handleAddWater}
-              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50"
-            >
-              <Droplet size={18} />
-              <span>Log Water</span>
-              {timerStore.waterGlasses > 0 && (
-                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
-                  {timerStore.waterGlasses}
-                </span>
-              )}
-            </button>
-            <p className="text-[10px] text-[var(--fl-text-tertiary)]">
-              Water, black coffee & tea won&apos;t break your fast
-            </p>
+        <div className="flex flex-col items-center gap-5">
+          {/* Zone 1: Hero Timer */}
+          <div className="pt-2">
+            <TimerRing
+              progress={timer.progress}
+              hours={timer.hours}
+              minutes={timer.minutes}
+              seconds={timer.seconds}
+              isComplete={timer.isComplete}
+              isOvertime={timer.isOvertime}
+              overtimeMs={timer.overtimeMs}
+              protocol={protocolInfo?.name ?? timer.protocol}
+              isActive
+            />
           </div>
 
-          <p className="text-sm text-[var(--fl-text-secondary)] text-center">
+          {/* Zone 2: Status Message */}
+          <p className="text-base font-semibold text-[var(--fl-text)] text-center">
             {timer.isComplete
-              ? 'You reached your goal! End the fast or keep going.'
+              ? 'You crushed it! End the fast or keep going.'
               : `${formatDuration(timer.remaining)} remaining`}
           </p>
 
+          {/* Zone 3: Body State Card */}
+          <BodyStateCard
+            elapsedHours={elapsedHours}
+            fastingHours={timerStore.fastingHours ?? 16}
+            className="w-full shadow-[var(--fl-shadow-sm)]"
+          />
+
+          {/* Zone 4: Quick Actions Row */}
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="flex items-center gap-2.5">
+              {/* Water pill */}
+              <button
+                type="button"
+                onClick={handleAddWater}
+                className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-all hover:bg-blue-50 active:scale-[0.96]"
+              >
+                <Droplet size={18} />
+                <span>Water</span>
+                {timerStore.waterGlasses > 0 && (
+                  <span className="ml-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
+                    {timerStore.waterGlasses}
+                  </span>
+                )}
+              </button>
+
+              {/* +1h pill */}
+              <button
+                type="button"
+                onClick={handleExtend}
+                className="flex items-center gap-1.5 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-secondary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+              >
+                <Clock size={16} />
+                <span>+1h</span>
+              </button>
+
+              {/* -1h pill (only when extended) */}
+              {timerStore.extendedHours > 0 && (
+                <button
+                  type="button"
+                  onClick={handleReduce}
+                  className="flex items-center gap-1.5 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                >
+                  <span>−1h</span>
+                </button>
+              )}
+            </div>
+            <p className="text-[10px] text-[var(--fl-text-tertiary)]">
+              Water, black coffee &amp; tea won&apos;t break your fast
+            </p>
+          </div>
+
+          {/* Zone 5: Primary Controls */}
           <TimerControls
             isActive
             onStart={handleStart}
@@ -240,12 +280,25 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             elapsedHours={elapsedHours}
           />
 
+          {/* Zone 6: Collapsible Body State Timeline */}
           <div className="w-full">
-            <h3 className="mb-3 text-sm font-semibold text-[var(--fl-text)]">Body State Timeline</h3>
-            <BodyStateTimeline
-              elapsedHours={elapsedHours}
-              fastingHours={timerStore.fastingHours ?? 16}
-            />
+            <button
+              type="button"
+              onClick={() => setShowTimeline(!showTimeline)}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
+            >
+              Body State Timeline
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showTimeline ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {showTimeline && (
+              <BodyStateTimeline
+                elapsedHours={elapsedHours}
+                fastingHours={timerStore.fastingHours ?? 16}
+              />
+            )}
           </div>
 
           {/* Sign-up nudge for guests */}
