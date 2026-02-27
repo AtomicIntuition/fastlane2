@@ -233,44 +233,42 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             className="w-full shadow-[var(--fl-shadow-sm)]"
           />
 
-          {/* Zone 4: Quick Actions Row */}
-          <div className="flex flex-col items-center gap-2">
-            {/* Water row */}
-            <div className="flex items-center gap-2">
+          {/* Zone 4: Quick Actions */}
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {/* +Water */}
               <button
                 type="button"
                 onClick={handleAddWater}
-                className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-all hover:bg-blue-50 active:scale-[0.96]"
+                className="flex items-center gap-1.5 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3.5 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-info)] transition-all hover:bg-blue-50 active:scale-[0.96]"
               >
-                <Droplet size={18} />
+                <Droplet size={16} />
                 <span>+Water</span>
                 {timerStore.waterGlasses > 0 && (
-                  <span className="ml-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
+                  <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1 text-[10px] font-bold text-white">
                     {timerStore.waterGlasses}
                   </span>
                 )}
               </button>
 
-              {/* -1 water (only when water > 0) */}
+              {/* -Water (only when > 0) */}
               {timerStore.waterGlasses > 0 && (
                 <button
                   type="button"
                   onClick={handleRemoveWater}
-                  className="flex items-center gap-1 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                  className="rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-2.5 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
                 >
-                  <span>−1</span>
+                  −Water
                 </button>
               )}
-            </div>
 
-            {/* Time extension row */}
-            <div className="flex items-center gap-2">
+              {/* +1h */}
               <button
                 type="button"
                 onClick={handleExtend}
-                className="flex items-center gap-1.5 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-secondary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                className="flex items-center gap-1 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3.5 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
               >
-                <Clock size={16} />
+                <Clock size={14} />
                 <span>+1h</span>
               </button>
 
@@ -279,9 +277,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 <button
                   type="button"
                   onClick={handleReduce}
-                  className="flex items-center gap-1.5 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                  className="rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-2.5 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
                 >
-                  <span>−1h</span>
+                  −1h
                 </button>
               )}
             </div>
