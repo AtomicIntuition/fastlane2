@@ -276,17 +276,19 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           )}
 
           {/* Pulsing START FAST button */}
-          <button
-            type="button"
-            onClick={handleStart}
-            className="group relative flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 text-white shadow-xl shadow-violet-500/25 transition-all hover:shadow-2xl hover:shadow-violet-500/30 active:scale-95"
-          >
-            <span className="absolute inset-0 animate-ping rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 opacity-20" style={{ animationDuration: '2s' }} />
-            <span className="absolute -inset-2 animate-pulse rounded-full border-2 border-violet-400/30" style={{ animationDuration: '2s' }} />
-            <span className="relative text-lg font-bold uppercase tracking-wider">
-              Start<br />Fast
-            </span>
-          </button>
+          <div className="relative flex items-center justify-center">
+            {/* Outer glow halo */}
+            <span className="start-btn-glow absolute -inset-5 rounded-full bg-gradient-to-br from-blue-500/40 via-violet-500/40 to-amber-500/40 blur-xl" />
+            <button
+              type="button"
+              onClick={handleStart}
+              className="start-btn-breathe relative flex h-[180px] w-[180px] items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-amber-500 text-white shadow-[0_0_40px_rgba(139,92,246,0.4)] transition-shadow duration-300 hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] active:scale-95"
+            >
+              <span className="relative text-xl font-bold uppercase tracking-widest">
+                Start<br />Fast
+              </span>
+            </button>
+          </div>
 
           <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
             Tap to start a {selectedProtocolInfo?.fastingHours ?? 16}h fast

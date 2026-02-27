@@ -131,3 +131,29 @@ body {
 .timer-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
+
+/* Start button animations */
+@keyframes start-btn-glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.04); }
+}
+
+@keyframes start-btn-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.start-btn-glow {
+  animation: start-btn-glow 3s ease-in-out infinite;
+}
+
+.start-btn-breathe {
+  animation: start-btn-breathe 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-btn-glow,
+  .start-btn-breathe {
+    animation: none;
+  }
+}
