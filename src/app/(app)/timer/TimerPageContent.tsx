@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame, AlertTriangle } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -23,7 +23,9 @@ import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
 import { BodyStateCard } from '@/components/fasting/BodyStateCard'
 import { BodyStateTimeline } from '@/components/fasting/BodyStateTimeline'
 import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
+import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
+import { getCurrentBodyState, getNextBodyState } from '@/lib/fasting/body-states'
 import { getProtocol, type FastingProtocol } from '@/lib/fasting/protocols'
 import { formatDuration } from '@/lib/utils/dates'
 import { generateId } from '@/lib/utils/id'
@@ -59,6 +61,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showTips, setShowTips] = useState(false)
   const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
   const [showTimeline, setShowTimeline] = useState(true)
+  const [showEndConfirm, setShowEndConfirm] = useState(false)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -200,43 +203,62 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const selectedProtocolInfo = selectedProtocol ? getProtocol(selectedProtocol) : null
   const elapsedHours = timer.elapsed / 3_600_000
 
+  // Body state info for end fast dialog
+  const currentBodyState = getCurrentBodyState(elapsedHours)
+  const nextBodyState = getNextBodyState(elapsedHours)
+  const hoursUntilNext = nextBodyState ? nextBodyState.startHour - elapsedHours : null
+
+  function formatElapsed(hours: number): string {
+    const h = Math.floor(hours)
+    const m = Math.floor((hours - h) * 60)
+    if (h === 0) return `${m}m`
+    if (m === 0) return `${h}h`
+    return `${h}h ${m}m`
+  }
+
+  function formatHoursMinutes(hours: number): string {
+    const h = Math.floor(hours)
+    const m = Math.floor((hours - h) * 60)
+    if (h === 0) return `${m} minutes`
+    if (m === 0) return `${h} hour${h !== 1 ? 's' : ''}`
+    return `${h}h ${m}m`
+  }
+
   return (
     <div className="mx-auto max-w-lg">
       {isActive ? (
-        <div className="flex flex-col items-center gap-5">
-          {/* Zone 1: Hero Timer */}
-          <div className="pt-2">
-            <TimerRing
-              progress={timer.progress}
-              hours={timer.hours}
-              minutes={timer.minutes}
-              seconds={timer.seconds}
-              isComplete={timer.isComplete}
-              isOvertime={timer.isOvertime}
-              overtimeMs={timer.overtimeMs}
-              protocol={protocolInfo?.name ?? timer.protocol}
-              isActive
-            />
-          </div>
-
-          {/* Zone 2: Status Message */}
-          <p className="text-base font-semibold text-[var(--fl-text)] text-center">
-            {timer.isComplete
-              ? 'You crushed it! End the fast or keep going.'
-              : `${formatDuration(timer.remaining)} remaining`}
-          </p>
-
-          {/* Zone 3: Body State Card */}
+        <div className="flex flex-col items-center gap-4">
+          {/* Body State Card — top for context */}
           <BodyStateCard
             elapsedHours={elapsedHours}
             fastingHours={timerStore.fastingHours ?? 16}
-            className="w-full shadow-[var(--fl-shadow-sm)]"
+            className="w-full"
           />
 
-          {/* Zone 4: Quick Actions */}
+          {/* Timer Ring with End Fast inside */}
+          <TimerRing
+            progress={timer.progress}
+            hours={timer.hours}
+            minutes={timer.minutes}
+            seconds={timer.seconds}
+            isComplete={timer.isComplete}
+            isOvertime={timer.isOvertime}
+            overtimeMs={timer.overtimeMs}
+            protocol={protocolInfo?.name ?? timer.protocol}
+            isActive
+            onEndFast={() => setShowEndConfirm(true)}
+          />
+
+          {/* Status */}
+          <p className="text-base font-semibold text-[var(--fl-text)] text-center">
+            {timer.isComplete
+              ? 'You crushed it! Tap End Fast or keep going.'
+              : `${formatDuration(timer.remaining)} remaining`}
+          </p>
+
+          {/* Quick Actions — single row */}
           <div className="flex flex-col items-center gap-1.5">
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {/* +Water */}
               <button
                 type="button"
                 onClick={handleAddWater}
@@ -251,7 +273,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 )}
               </button>
 
-              {/* -Water (only when > 0) */}
               {timerStore.waterGlasses > 0 && (
                 <button
                   type="button"
@@ -262,7 +283,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 </button>
               )}
 
-              {/* +1h */}
               <button
                 type="button"
                 onClick={handleExtend}
@@ -272,7 +292,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 <span>+1h</span>
               </button>
 
-              {/* -1h (only when extended) */}
               {timerStore.extendedHours > 0 && (
                 <button
                   type="button"
@@ -289,19 +308,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </p>
           </div>
 
-          {/* Zone 5: Primary Controls */}
-          <TimerControls
-            isActive
-            onStart={handleStart}
-            onComplete={handleComplete}
-            onExtend={handleExtend}
-            onReduce={handleReduce}
-            onCancel={handleCancel}
-            extendedHours={timerStore.extendedHours}
-            elapsedHours={elapsedHours}
-          />
-
-          {/* Zone 6: Collapsible Body State Timeline */}
+          {/* Collapsible Body State Timeline */}
           <div className="w-full">
             <button
               type="button"
@@ -331,6 +338,84 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               to save your progress
             </p>
           )}
+
+          {/* End Fast confirmation dialog */}
+          <Dialog
+            open={showEndConfirm}
+            onClose={() => setShowEndConfirm(false)}
+          >
+            <div className="flex flex-col items-center text-center gap-5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100">
+                <Flame size={32} className="text-orange-500" />
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-[var(--fl-text)]">
+                  End your fast?
+                </h2>
+                <p className="mt-2 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
+                  You&apos;ve been fasting for{' '}
+                  <span className="font-semibold text-[var(--fl-text)]">
+                    {formatElapsed(elapsedHours)}
+                  </span>
+                </p>
+              </div>
+
+              {currentBodyState && (
+                <div className="w-full rounded-xl bg-[var(--fl-bg-secondary)] p-4">
+                  <div className="flex items-center justify-center gap-2 text-sm">
+                    <span className="text-lg">{currentBodyState.emoji}</span>
+                    <span className="font-semibold text-[var(--fl-text)]">
+                      {currentBodyState.name}
+                    </span>
+                  </div>
+                  {nextBodyState && hoursUntilNext != null && hoursUntilNext > 0 && (
+                    <p className="mt-2 text-[var(--fl-text-xs)] text-[var(--fl-text-secondary)]">
+                      Only{' '}
+                      <span className="font-bold text-[var(--fl-primary)]">
+                        {formatHoursMinutes(hoursUntilNext)}
+                      </span>{' '}
+                      until {nextBodyState.emoji} {nextBodyState.name}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="flex w-full flex-col gap-2.5">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  onClick={() => setShowEndConfirm(false)}
+                  leftIcon={<Flame size={18} />}
+                >
+                  Keep Going
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  fullWidth
+                  onClick={() => {
+                    setShowEndConfirm(false)
+                    handleComplete()
+                  }}
+                  className="text-[var(--fl-text-tertiary)] hover:text-[var(--fl-text-secondary)]"
+                >
+                  End Fast
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEndConfirm(false)
+                    handleCancel()
+                  }}
+                  className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)] transition-colors hover:text-[var(--fl-danger)]"
+                >
+                  Cancel fast (discard)
+                </button>
+              </div>
+            </div>
+          </Dialog>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-6 pt-6">

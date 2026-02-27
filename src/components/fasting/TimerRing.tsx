@@ -25,6 +25,8 @@ export interface TimerRingProps {
   protocol: string | null
   /** Whether the timer is actively running */
   isActive?: boolean
+  /** Called when the user taps "End Fast" inside the ring */
+  onEndFast?: () => void
   /** Extra class names for the root element */
   className?: string
 }
@@ -69,6 +71,7 @@ export function TimerRing({
   overtimeMs,
   protocol,
   isActive = false,
+  onEndFast,
   className,
 }: TimerRingProps) {
   const clampedProgress = Math.min(Math.max(0, progress), 1)
@@ -202,6 +205,17 @@ export function TimerRing({
         >
           {statusText}
         </span>
+
+        {/* End Fast button inside ring */}
+        {isActive && onEndFast && (
+          <button
+            type="button"
+            onClick={onEndFast}
+            className="mt-2.5 rounded-full bg-[var(--fl-text)]/8 px-4 py-1 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)] transition-all hover:bg-[var(--fl-text)]/15 active:scale-[0.96]"
+          >
+            End Fast
+          </button>
+        )}
       </div>
     </div>
   )
