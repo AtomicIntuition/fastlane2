@@ -11,9 +11,11 @@ export const metadata: Metadata = {
 }
 
 export default async function SettingsPage() {
-  const session = await auth()
+  const session = await auth().catch(() => null)
+
+  // Settings/Profile requires an account — redirect guests to register
   if (!session?.user?.id) {
-    redirect('/login')
+    redirect('/register')
   }
 
   const userId = session.user.id

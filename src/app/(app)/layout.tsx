@@ -12,11 +12,17 @@ export default async function AppLayout({
   children: React.ReactNode
 }) {
   /* ---------------------------------------------------------------- */
-  /*  Auth gate                                                        */
+  /*  Auth check — allow guests through                               */
   /* ---------------------------------------------------------------- */
-  const session = await auth()
+  const session = await auth().catch(() => null)
+
   if (!session?.user?.id) {
-    redirect('/login')
+    // Guest mode — render shell without user data
+    return (
+      <AppShell user={null} planId="free">
+        {children}
+      </AppShell>
+    )
   }
 
   const userId = session.user.id

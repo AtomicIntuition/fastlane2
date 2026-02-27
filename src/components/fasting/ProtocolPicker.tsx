@@ -1,6 +1,5 @@
 'use client'
 
-import { Lock } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { PROTOCOLS, type FastingProtocol } from '@/lib/fasting/protocols'
 import { Badge } from '@/components/ui/Badge'
@@ -41,12 +40,6 @@ export function ProtocolPicker({
   isPro = false,
   className,
 }: ProtocolPickerProps) {
-  function handleSelect(protocol: FastingProtocol) {
-    // Free users cannot select Pro protocols
-    if (protocol.isPro && !isPro) return
-    onSelect(protocol)
-  }
-
   return (
     <div
       role="listbox"
@@ -58,7 +51,7 @@ export function ProtocolPicker({
     >
       {PROTOCOLS.map((protocol) => {
         const isSelected = selectedProtocol === protocol.id
-        const isLocked = protocol.isPro && !isPro
+        const isProProtocol = protocol.isPro && !isPro
 
         return (
           <Card
@@ -69,31 +62,20 @@ export function ProtocolPicker({
               'hover:shadow-[var(--fl-shadow-sm)]',
               isSelected &&
                 'ring-2 ring-[var(--fl-primary)] border-[var(--fl-primary)]',
-              isLocked &&
-                'cursor-not-allowed opacity-70 hover:shadow-none',
               !isSelected &&
-                !isLocked &&
                 'hover:border-[var(--fl-border-hover)]',
             )}
-            onClick={() => handleSelect(protocol)}
+            onClick={() => onSelect(protocol)}
             role="option"
-            tabIndex={isLocked ? -1 : 0}
+            tabIndex={0}
             aria-selected={isSelected}
-            aria-disabled={isLocked}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
-                handleSelect(protocol)
+                onSelect(protocol)
               }
             }}
           >
-            {/* Lock overlay for Pro protocols */}
-            {isLocked && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[var(--fl-radius-lg)] bg-[var(--fl-bg)]/60">
-                <Lock size={24} className="text-[var(--fl-text-tertiary)]" />
-              </div>
-            )}
-
             <div className="flex flex-col gap-2">
               {/* Header: name + badges */}
               <div className="flex items-start justify-between gap-2">
@@ -101,7 +83,7 @@ export function ProtocolPicker({
                   {protocol.name}
                 </h3>
                 <div className="flex shrink-0 items-center gap-1">
-                  {protocol.isPro && (
+                  {isProProtocol && (
                     <Badge variant="pro" size="sm">
                       Pro
                     </Badge>

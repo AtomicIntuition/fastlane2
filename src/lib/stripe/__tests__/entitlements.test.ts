@@ -7,10 +7,6 @@ describe('getEntitlements', () => {
     expect(entitlements.maxProtocols).toBe(4)
     expect(entitlements.customProtocol).toBe(false)
     expect(entitlements.unlimitedHistory).toBe(false)
-    expect(entitlements.advancedStats).toBe(false)
-    expect(entitlements.calendarHeatmap).toBe(false)
-    expect(entitlements.trendCharts).toBe(false)
-    expect(entitlements.weeklySummary).toBe(false)
     expect(entitlements.prioritySupport).toBe(false)
   })
 
@@ -19,10 +15,6 @@ describe('getEntitlements', () => {
     expect(entitlements.maxProtocols).toBe(Infinity)
     expect(entitlements.customProtocol).toBe(true)
     expect(entitlements.unlimitedHistory).toBe(true)
-    expect(entitlements.advancedStats).toBe(true)
-    expect(entitlements.calendarHeatmap).toBe(true)
-    expect(entitlements.trendCharts).toBe(true)
-    expect(entitlements.weeklySummary).toBe(true)
     expect(entitlements.prioritySupport).toBe(true)
   })
 
@@ -32,10 +24,6 @@ describe('getEntitlements', () => {
       'maxProtocols',
       'customProtocol',
       'unlimitedHistory',
-      'advancedStats',
-      'calendarHeatmap',
-      'trendCharts',
-      'weeklySummary',
       'prioritySupport',
     ]
     expectedKeys.forEach((key) => {
@@ -49,20 +37,12 @@ describe('hasEntitlement', () => {
   it('returns true for pro features on pro plan', () => {
     expect(hasEntitlement('pro', 'customProtocol')).toBe(true)
     expect(hasEntitlement('pro', 'unlimitedHistory')).toBe(true)
-    expect(hasEntitlement('pro', 'advancedStats')).toBe(true)
-    expect(hasEntitlement('pro', 'calendarHeatmap')).toBe(true)
-    expect(hasEntitlement('pro', 'trendCharts')).toBe(true)
-    expect(hasEntitlement('pro', 'weeklySummary')).toBe(true)
     expect(hasEntitlement('pro', 'prioritySupport')).toBe(true)
   })
 
   it('returns false for pro features on free plan', () => {
     expect(hasEntitlement('free', 'customProtocol')).toBe(false)
     expect(hasEntitlement('free', 'unlimitedHistory')).toBe(false)
-    expect(hasEntitlement('free', 'advancedStats')).toBe(false)
-    expect(hasEntitlement('free', 'calendarHeatmap')).toBe(false)
-    expect(hasEntitlement('free', 'trendCharts')).toBe(false)
-    expect(hasEntitlement('free', 'weeklySummary')).toBe(false)
     expect(hasEntitlement('free', 'prioritySupport')).toBe(false)
   })
 

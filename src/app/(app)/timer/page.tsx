@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth/auth'
-import { redirect } from 'next/navigation'
 import { getActiveSession } from '@/lib/fasting/session-manager'
 import { TimerPageContent } from './TimerPageContent'
 import type { FastingSessionData } from '@/hooks/use-fasting-session'
@@ -10,9 +9,11 @@ export const metadata: Metadata = {
 }
 
 export default async function TimerPage() {
-  const session = await auth()
+  const session = await auth().catch(() => null)
+
   if (!session?.user?.id) {
-    redirect('/login')
+    // Guest — no server session, timer runs locally
+    return <TimerPageContent initialActiveSession={null} />
   }
 
   const activeSessionRaw = await getActiveSession(session.user.id)

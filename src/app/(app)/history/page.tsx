@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth/auth'
-import { redirect } from 'next/navigation'
 import { getSessionHistory } from '@/lib/fasting/session-manager'
 import { HistoryContent } from './HistoryContent'
 import type { FastingSessionData } from '@/hooks/use-fasting-session'
@@ -10,9 +9,11 @@ export const metadata: Metadata = {
 }
 
 export default async function HistoryPage() {
-  const session = await auth()
+  const session = await auth().catch(() => null)
+
   if (!session?.user?.id) {
-    redirect('/login')
+    // Guest — no server history, show empty state
+    return <HistoryContent initialSessions={[]} />
   }
 
   const rawHistory = await getSessionHistory(session.user.id, 100)

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth/auth'
-import { redirect } from 'next/navigation'
 import { db } from '@/db'
 import { fastingSessions } from '@/db/schema'
 import { eq, desc } from 'drizzle-orm'
@@ -55,13 +54,30 @@ function buildWeekData(
 }
 
 /* ------------------------------------------------------------------ */
+/*  Empty data for guests                                              */
+/* ------------------------------------------------------------------ */
+
+const EMPTY_STREAKS: StreakResult = { currentStreak: 0, longestStreak: 0, totalCompleted: 0, completionRate: 0 }
+const EMPTY_WEEK: WeekData = { totalHours: 0, totalFasts: 0, avgDuration: 0 }
+
+/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
 export default async function StatsPage() {
-  const session = await auth()
+  const session = await auth().catch(() => null)
+
   if (!session?.user?.id) {
-    redirect('/login')
+    // Guest — show empty stats (UI still fully visible)
+    return (
+      <StatsContent
+        streaks={EMPTY_STREAKS}
+        thisWeek={EMPTY_WEEK}
+        lastWeek={EMPTY_WEEK}
+        trendData={DAY_LABELS.slice(-7).map((day) => ({ day, hours: 0 }))}
+        heatmapData={[]}
+      />
+    )
   }
 
   const userId = session.user.id

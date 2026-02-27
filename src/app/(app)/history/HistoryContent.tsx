@@ -2,11 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import { CalendarDays, Filter } from 'lucide-react'
-import { useApp } from '@/components/layout/AppShell'
 import { useSessionHistory, type FastingSessionData } from '@/hooks/use-fasting-session'
 import { SessionCard } from '@/components/fasting/SessionCard'
 import { CalendarHeatmap, type HeatmapDay } from '@/components/stats/CalendarHeatmap'
-import { ProGate } from '@/components/shared/ProGate'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { toDateString } from '@/lib/utils/dates'
@@ -26,9 +24,6 @@ interface HistoryContentProps {
 /* ------------------------------------------------------------------ */
 
 export function HistoryContent({ initialSessions }: HistoryContentProps) {
-  const { planId } = useApp()
-  const isPro = planId === 'pro'
-
   const { data: sessions = initialSessions } = useSessionHistory(initialSessions)
 
   const [filter, setFilter] = useState<StatusFilter>('all')
@@ -62,16 +57,14 @@ export function HistoryContent({ initialSessions }: HistoryContentProps) {
       <h2 className="text-xl font-bold text-[var(--fl-text)]">History</h2>
 
       {/* ---- Calendar Heatmap ---- */}
-      <ProGate isPro={isPro} feature="Calendar heatmap">
-        <Card padding="md">
-          <h3 className="mb-4 text-[var(--fl-text-base)] font-semibold text-[var(--fl-text)]">
-            Fasting Activity
-          </h3>
-          <div className="overflow-x-auto">
-            <CalendarHeatmap data={heatmapData} weeks={12} />
-          </div>
-        </Card>
-      </ProGate>
+      <Card padding="md">
+        <h3 className="mb-4 text-[var(--fl-text-base)] font-semibold text-[var(--fl-text)]">
+          Fasting Activity
+        </h3>
+        <div className="overflow-x-auto">
+          <CalendarHeatmap data={heatmapData} weeks={12} />
+        </div>
+      </Card>
 
       {/* ---- Filter Bar ---- */}
       <div className="flex items-center gap-2">
@@ -102,24 +95,24 @@ export function HistoryContent({ initialSessions }: HistoryContentProps) {
           </h3>
           <p className="max-w-xs text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
             {filter === 'all'
-              ? 'Start your first fast from the dashboard to see it here.'
+              ? 'Start your first fast to see it here.'
               : `No ${filter} sessions found. Try a different filter.`}
           </p>
         </Card>
       ) : (
         <div className="flex flex-col gap-3">
-          {filteredSessions.map((session) => (
+          {filteredSessions.map((s) => (
             <SessionCard
-              key={session.id}
+              key={s.id}
               session={{
-                id: session.id,
-                protocol: session.protocol,
-                startedAt: session.startedAt,
-                targetEndAt: session.targetEndAt,
-                actualEndAt: session.actualEndAt,
-                status: session.status as 'active' | 'completed' | 'cancelled',
-                fastingHours: session.fastingHours,
-                eatingHours: session.eatingHours,
+                id: s.id,
+                protocol: s.protocol,
+                startedAt: s.startedAt,
+                targetEndAt: s.targetEndAt,
+                actualEndAt: s.actualEndAt,
+                status: s.status as 'active' | 'completed' | 'cancelled',
+                fastingHours: s.fastingHours,
+                eatingHours: s.eatingHours,
               }}
             />
           ))}

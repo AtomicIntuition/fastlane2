@@ -21,7 +21,7 @@ export interface AppUser {
 }
 
 export interface AppContextValue {
-  user: AppUser
+  user: AppUser | null
   planId: 'free' | 'pro'
 }
 
@@ -45,7 +45,7 @@ export function useApp(): AppContextValue {
 
 export interface AppShellProps {
   children: ReactNode
-  user: AppUser
+  user: AppUser | null
   planId: 'free' | 'pro'
 }
 
@@ -55,35 +55,44 @@ export interface AppShellProps {
 
 export function AppShell({ children, user, planId }: AppShellProps) {
   const isPro = planId === 'pro'
+  const isGuest = !user
 
   return (
     <AppContext.Provider value={{ user, planId }}>
-      {/* Sidebar (desktop: persistent, mobile: slide-out) */}
-      <Sidebar
-        userName={user.name ?? undefined}
-        userEmail={user.email ?? undefined}
-        userImage={user.image}
-        isPro={isPro}
-      />
-
-      {/* Header (always visible) */}
-      <div className="lg:pl-64">
-        <AppHeader
+      {/* Sidebar (desktop: persistent, mobile: slide-out) — only for logged-in users */}
+      {!isGuest && (
+        <Sidebar
           userName={user.name ?? undefined}
+          userEmail={user.email ?? undefined}
           userImage={user.image}
+          isPro={isPro}
         />
+      )}
+
+      {/* Header + content */}
+      <div className={isGuest ? '' : 'lg:pl-64'}>
+        {!isGuest && (
+          <AppHeader
+            userName={user.name ?? undefined}
+            userImage={user.image}
+          />
+        )}
 
         {/* Main content */}
         <main
           id="main-content"
-          className="min-h-[calc(100dvh-3.5rem)] px-4 py-6 pb-24 lg:px-8 lg:pb-8"
+          className={
+            isGuest
+              ? 'min-h-dvh px-4 py-6 pb-24'
+              : 'min-h-[calc(100dvh-3.5rem)] px-4 py-6 pb-24 lg:px-8 lg:pb-8'
+          }
         >
           {children}
         </main>
       </div>
 
       {/* Bottom navigation (mobile only) */}
-      <BottomNav />
+      <BottomNav guest={isGuest} />
     </AppContext.Provider>
   )
 }

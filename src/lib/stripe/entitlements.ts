@@ -4,10 +4,6 @@ export interface Entitlements {
   maxProtocols: number
   customProtocol: boolean
   unlimitedHistory: boolean
-  advancedStats: boolean
-  calendarHeatmap: boolean
-  trendCharts: boolean
-  weeklySummary: boolean
   prioritySupport: boolean
 }
 
@@ -16,20 +12,12 @@ const ENTITLEMENTS_MAP: Record<PlanId, Entitlements> = {
     maxProtocols: 4,
     customProtocol: false,
     unlimitedHistory: false,
-    advancedStats: false,
-    calendarHeatmap: false,
-    trendCharts: false,
-    weeklySummary: false,
     prioritySupport: false,
   },
   pro: {
     maxProtocols: Infinity,
     customProtocol: true,
     unlimitedHistory: true,
-    advancedStats: true,
-    calendarHeatmap: true,
-    trendCharts: true,
-    weeklySummary: true,
     prioritySupport: true,
   },
 }
