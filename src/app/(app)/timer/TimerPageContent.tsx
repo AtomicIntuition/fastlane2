@@ -55,6 +55,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showLearnMore, setShowLearnMore] = useState(false)
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showTips, setShowTips] = useState(false)
+  const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -320,22 +321,74 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </p>
 
           {/* Benefit pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
-            {[
-              { icon: '/icon-fat-burning.png', label: 'Fat Burning' },
-              { icon: '/icon-mental-clarity.png', label: 'Mental Clarity' },
-              { icon: '/icon-cell-repair.png', label: 'Cell Repair' },
-              { icon: '/icon-longevity.png', label: 'Longevity' },
-            ].map((b) => (
-              <span
-                key={b.label}
-                className="inline-flex h-9 items-center gap-2 rounded-full bg-[var(--fl-bg-secondary)] pr-3.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
-              >
-                <Image src={b.icon} alt={b.label} width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
-                {b.label}
-              </span>
-            ))}
-          </div>
+          {(() => {
+            const benefits = [
+              {
+                id: 'fat-burning',
+                icon: '/icon-fat-burning.png',
+                label: 'Fat Burning',
+                title: 'Fat Burning',
+                content: 'After 8–12 hours of fasting, your body runs out of glucose from your last meal and switches to burning stored fat for energy. This process, called fat oxidation, is one of the main reasons people fast. Your insulin drops low enough for fat cells to release their stores, and your body becomes a fat-burning machine. This is also when you start producing ketones — an efficient fuel source your brain loves.',
+              },
+              {
+                id: 'mental-clarity',
+                icon: '/icon-mental-clarity.png',
+                label: 'Mental Clarity',
+                title: 'Mental Clarity',
+                content: 'Many fasters report sharper focus and clearer thinking around the 12–16 hour mark. This happens because your brain switches from glucose to ketones for fuel — and ketones are a remarkably clean energy source for your brain. Your body also increases production of BDNF (brain-derived neurotrophic factor), a protein that supports learning, memory, and the growth of new brain cells. It\'s why some of your best thinking happens on an empty stomach.',
+              },
+              {
+                id: 'cell-repair',
+                icon: '/icon-cell-repair.png',
+                label: 'Cell Repair',
+                title: 'Cell Repair (Autophagy)',
+                content: 'Around 14–16 hours into a fast, your cells activate a cleanup process called autophagy — literally "self-eating." Your cells identify damaged proteins, broken organelles, and cellular waste, then break them down and recycle the parts into new, healthy components. Think of it as your body\'s built-in maintenance crew. This process is linked to reduced inflammation, slower aging, and lower risk of diseases like cancer and Alzheimer\'s.',
+              },
+              {
+                id: 'longevity',
+                icon: '/icon-longevity.png',
+                label: 'Longevity',
+                title: 'Longevity',
+                content: 'Regular fasting triggers several pathways associated with a longer, healthier life. Growth hormone increases significantly (up to 5x), helping preserve muscle and burn fat. Your cells become more resilient to stress through a process called hormesis — small challenges that make them stronger. Studies in both animals and humans show that consistent fasting improves metabolic health markers, reduces chronic inflammation, and may slow biological aging at the cellular level.',
+              },
+            ]
+
+            return (
+              <>
+                <div className="flex flex-wrap items-center justify-center gap-2.5">
+                  {benefits.map((b) => (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => setActiveBenefit(activeBenefit === b.id ? null : b.id)}
+                      className={`inline-flex h-9 items-center gap-2 rounded-full pr-3.5 text-[var(--fl-text-xs)] font-medium transition-colors ${activeBenefit === b.id ? 'bg-[var(--fl-primary)] text-white' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)] hover:bg-[var(--fl-bg-tertiary)]'}`}
+                    >
+                      <Image src={b.icon} alt={b.label} width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+
+                {activeBenefit && (() => {
+                  const benefit = benefits.find((b) => b.id === activeBenefit)
+                  if (!benefit) return null
+                  return (
+                    <div className="w-full rounded-xl bg-[var(--fl-bg-secondary)] p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Image src={benefit.icon} alt={benefit.label} width={40} height={40} className="rounded-full" />
+                        <h3 className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-text)]">
+                          {benefit.title}
+                        </h3>
+                      </div>
+                      <p className="text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
+                        {benefit.content}
+                      </p>
+                    </div>
+                  )
+                })()}
+              </>
+            )
+          })()}
 
           {/* How It Works — accordion (collapsed by default) */}
           <div className="w-full">
