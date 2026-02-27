@@ -110,10 +110,10 @@
   --fl-transition-base: 200ms ease;
   --fl-transition-slow: 300ms ease;
 
-  /* Timer Ring Gradient */
-  --fl-timer-start: #3b82f6;
-  --fl-timer-mid: #8b5cf6;
-  --fl-timer-end: #f59e0b;
+  /* Timer Ring Gradient — matched to app icon */
+  --fl-timer-start: #4158d0;
+  --fl-timer-mid: #c850c0;
+  --fl-timer-end: #e8963a;
 
   /* Z-index */
   --fl-z-dropdown: 50;

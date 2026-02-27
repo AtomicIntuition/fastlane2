@@ -426,12 +426,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         <div className="flex flex-col items-center gap-6 pt-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:min-h-[calc(100vh-8rem)]">
           {/* Left column: headline, timer preview, protocol, start */}
           <div className="flex flex-col items-center gap-6 lg:gap-8 lg:py-8">
-          {/* Headline with inline brand */}
+          {/* Headline */}
           <div className="text-center px-2">
             <h1 className="text-[1.75rem] font-black leading-[1.2] tracking-tight text-[var(--fl-text)]">
-              <span className="inline-flex items-center gap-2 align-middle">
-                <Image src="/icon.png" alt="Unfed" width={30} height={30} className="rounded-lg inline-block" priority />
-              </span>{' '}
               Burn fat. Sharpen focus.
               <br />
               Live longer.

@@ -113,9 +113,9 @@ export function TimerRing({
         {/* Gradient definition for active ring */}
         <defs>
           <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="var(--fl-timer-start, #3b82f6)" />
-            <stop offset="50%" stopColor="var(--fl-timer-mid, #8b5cf6)" />
-            <stop offset="100%" stopColor="var(--fl-timer-end, #f59e0b)" />
+            <stop offset="0%" stopColor="var(--fl-timer-start, #4158d0)" />
+            <stop offset="50%" stopColor="var(--fl-timer-mid, #c850c0)" />
+            <stop offset="100%" stopColor="var(--fl-timer-end, #e8963a)" />
           </linearGradient>
         </defs>
 
@@ -150,7 +150,7 @@ export function TimerRing({
             filter: isComplete
               ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.5))'
               : useGradient
-                ? 'drop-shadow(0 0 6px rgba(139, 92, 246, 0.35))'
+                ? 'drop-shadow(0 0 6px rgba(200, 80, 192, 0.35))'
                 : undefined,
           }}
         />
