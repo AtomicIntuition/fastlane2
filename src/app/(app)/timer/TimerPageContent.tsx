@@ -396,33 +396,57 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-6 pt-6">
-          {/* Title */}
-          <h1 className="text-center font-[family-name:var(--font-playfair)] text-[2rem] font-black italic leading-tight tracking-tight text-[var(--fl-text)]">
-            Intermittent Fasting
-          </h1>
+        <div className="flex flex-col items-center gap-8 pt-4">
+          {/* Brand mark */}
+          <div className="flex items-center gap-2.5">
+            <Image src="/icon.png" alt="FastLane" width={36} height={36} className="rounded-xl" priority />
+            <span className="text-[15px] font-bold text-[var(--fl-text)]">FastLane</span>
+          </div>
 
-          {/* Protocol selection */}
-          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-            Choose your fasting schedule
-          </p>
+          {/* Headline */}
+          <div className="text-center px-2">
+            <h1 className="text-[1.75rem] font-black leading-[1.2] tracking-tight text-[var(--fl-text)]">
+              Burn fat. Sharpen focus.
+              <br />
+              Live longer.
+            </h1>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--fl-text-secondary)]">
+              Intermittent fasting, beautifully tracked.
+            </p>
+          </div>
+
+          {/* Timer preview — shows the product in action */}
+          <div className="pointer-events-none select-none">
+            <TimerRing
+              progress={0.62}
+              hours={6}
+              minutes={5}
+              seconds={23}
+              isComplete={false}
+              isOvertime={false}
+              overtimeMs={0}
+              protocol="16:8"
+              isActive
+            />
+          </div>
+
+          {/* Protocol selector */}
           {selectedProtocolInfo && !showProtocols && (
             <button
               type="button"
               onClick={() => setShowProtocols(true)}
-              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
+              className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
             >
               <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
                 {selectedProtocolInfo.name}
               </span>
               <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-                {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
+                {selectedProtocolInfo.fastingHours}h fast · {selectedProtocolInfo.eatingHours}h eat
               </span>
               <ChevronDown size={14} className="text-[var(--fl-text-tertiary)]" />
             </button>
           )}
 
-          {/* Protocol picker (toggleable) */}
           {showProtocols && (
             <div className="w-full">
               <ProtocolPicker
@@ -433,31 +457,17 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </div>
           )}
 
-          {/* START FAST button — app icon as the button */}
-          <div className="relative flex items-center justify-center">
-            {/* Soft glow halo */}
-            <span className="start-btn-glow absolute -inset-6 rounded-full bg-violet-400/20 blur-2xl" />
-            <button
-              type="button"
-              onClick={handleStart}
-              className="start-btn-breathe relative flex h-[200px] w-[200px] items-center justify-center rounded-full transition-all duration-200 active:scale-[0.96]"
-            >
-              <Image
-                src="/icon.png"
-                alt="Start Fast"
-                width={200}
-                height={200}
-                className="absolute inset-0 h-full w-full rounded-full object-cover drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
-                priority
-              />
-              <span className="relative text-xl font-bold uppercase tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                Start<br />Fast
-              </span>
-            </button>
-          </div>
+          {/* Start CTA */}
+          <button
+            type="button"
+            onClick={handleStart}
+            className="h-14 w-full max-w-xs rounded-2xl bg-gradient-to-r from-blue-500 via-violet-500 to-amber-500 text-lg font-bold text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.97]"
+          >
+            Start Your Fast
+          </button>
 
           <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-            Tap to start a {selectedProtocolInfo?.fastingHours ?? 16}h fast
+            Free — no account required
           </p>
         </div>
       )}
@@ -511,7 +521,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
 
             return (
               <>
-                <div className="flex flex-wrap items-center justify-center gap-2.5">
+                <div className="grid grid-cols-2 gap-2.5 w-full max-w-xs mx-auto">
                   {benefits.map((b) => (
                     <button
                       key={b.id}
