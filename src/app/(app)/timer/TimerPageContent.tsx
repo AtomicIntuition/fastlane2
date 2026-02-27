@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -185,19 +185,24 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           <BodyStateCard elapsedHours={elapsedHours} className="w-full" />
 
           {/* Water tracking */}
-          <button
-            type="button"
-            onClick={handleAddWater}
-            className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50"
-          >
-            <Droplet size={18} />
-            <span>Water</span>
-            {timerStore.waterGlasses > 0 && (
-              <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
-                {timerStore.waterGlasses}
-              </span>
-            )}
-          </button>
+          <div className="flex flex-col items-center gap-1">
+            <button
+              type="button"
+              onClick={handleAddWater}
+              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50"
+            >
+              <Droplet size={18} />
+              <span>Log Water</span>
+              {timerStore.waterGlasses > 0 && (
+                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
+                  {timerStore.waterGlasses}
+                </span>
+              )}
+            </button>
+            <p className="text-[10px] text-[var(--fl-text-tertiary)]">
+              Water, black coffee & tea won&apos;t break your fast
+            </p>
+          </div>
 
           <p className="text-sm text-[var(--fl-text-secondary)] text-center">
             {timer.isComplete
@@ -274,6 +279,33 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               />
             </div>
           )}
+
+          {/* How It Works */}
+          <div className="w-full rounded-2xl bg-[var(--fl-bg-secondary)] p-5">
+            <h3 className="mb-4 text-center text-sm font-semibold text-[var(--fl-text)]">
+              How It Works
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: UtensilsCrossed, step: '1', text: 'Finish your last meal', color: 'text-orange-500' },
+                { icon: Moon, step: '2', text: 'Tap Start — sleep through most of it', color: 'text-violet-500' },
+                { icon: GlassWater, step: '3', text: 'Stay hydrated — water, coffee & tea are OK', color: 'text-blue-500' },
+                { icon: Sun, step: '4', text: 'Timer ends — enjoy your eating window!', color: 'text-amber-500' },
+              ].map((item) => (
+                <div
+                  key={item.step}
+                  className="flex flex-col items-center gap-2 rounded-xl bg-[var(--fl-bg)] p-3 text-center"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--fl-bg-secondary)]">
+                    <item.icon size={18} className={item.color} />
+                  </div>
+                  <p className="text-[11px] font-medium leading-snug text-[var(--fl-text-secondary)]">
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Pulsing START FAST button */}
           <div className="relative flex items-center justify-center">
