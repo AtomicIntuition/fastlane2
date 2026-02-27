@@ -1,6 +1,6 @@
 {
-  "name": "FastLane - Intermittent Fasting",
-  "short_name": "FastLane",
+  "name": "Unfed - Intermittent Fasting",
+  "short_name": "Unfed",
   "description": "Track your intermittent fasting journey with precision",
   "start_url": "/dashboard",
   "display": "standalone",

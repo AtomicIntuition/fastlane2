@@ -21,8 +21,8 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: 'FastLane - Intermittent Fasting Made Simple',
-    template: '%s | FastLane',
+    default: 'Unfed - Intermittent Fasting Made Simple',
+    template: '%s | Unfed',
   },
   description:
     'Track your intermittent fasting journey with precision. Beautiful timer, smart protocols, streak tracking, and insights to help you reach your health goals.',
@@ -34,20 +34,20 @@ export const metadata: Metadata = {
     'weight loss',
     'autophagy',
   ],
-  authors: [{ name: 'FastLane' }],
-  creator: 'FastLane',
+  authors: [{ name: 'Unfed' }],
+  creator: 'Unfed',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    siteName: 'FastLane',
-    title: 'FastLane - Intermittent Fasting Made Simple',
+    siteName: 'Unfed',
+    title: 'Unfed - Intermittent Fasting Made Simple',
     description:
       'Track your intermittent fasting journey with precision. Beautiful timer, smart protocols, streak tracking, and insights.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FastLane - Intermittent Fasting Made Simple',
+    title: 'Unfed - Intermittent Fasting Made Simple',
     description:
       'Track your intermittent fasting journey with precision. Beautiful timer, smart protocols, streak tracking, and insights.',
   },
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'FastLane',
+    title: 'Unfed',
   },
 }
 

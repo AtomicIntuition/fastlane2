@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Try FastLane',
+  title: 'Try Unfed',
 }
 
 export default function GuestLayout({

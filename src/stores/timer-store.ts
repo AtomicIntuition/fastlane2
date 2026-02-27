@@ -107,7 +107,7 @@ export const useTimerStore = create<TimerState>()(
         }),
     }),
     {
-      name: 'fastlane-timer',
+      name: 'unfed-timer',
       partialize: (state) => ({
         sessionId: state.sessionId,
         protocol: state.protocol,

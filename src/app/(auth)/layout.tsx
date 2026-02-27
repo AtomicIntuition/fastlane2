@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'FastLane',
+  title: 'Unfed',
 };
 
 export default function AuthLayout({

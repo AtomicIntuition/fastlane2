@@ -186,7 +186,7 @@ export function UpgradeContent({
             You&apos;re on Pro!
           </h2>
           <p className="mt-2 text-[var(--fl-text-secondary)]">
-            You have full access to all FastLane features.
+            You have full access to all Unfed features.
           </p>
         </div>
 

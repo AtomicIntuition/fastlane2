@@ -118,14 +118,14 @@ export function HomeContent() {
           <div className="text-center">
             <Image
               src="/icon.png"
-              alt="FastLane"
+              alt="Unfed"
               width={64}
               height={64}
               className="mx-auto mb-4 rounded-2xl shadow-lg shadow-violet-500/20"
             />
-            <h1 className="text-2xl font-bold text-[var(--fl-text)]">FastLane</h1>
+            <h1 className="text-2xl font-bold text-[var(--fl-text)]">Unfed</h1>
             <p className="mt-1 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
-              Intermittent fasting, simplified
+              Stay Unfed. Stay sharp.
             </p>
           </div>
 

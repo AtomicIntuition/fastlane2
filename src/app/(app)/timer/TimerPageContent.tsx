@@ -399,8 +399,8 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
         <div className="flex flex-col items-center gap-8 pt-4">
           {/* Brand mark */}
           <div className="flex items-center gap-2.5">
-            <Image src="/icon.png" alt="FastLane" width={36} height={36} className="rounded-xl" priority />
-            <span className="text-[15px] font-bold text-[var(--fl-text)]">FastLane</span>
+            <Image src="/icon.png" alt="Unfed" width={36} height={36} className="rounded-xl" priority />
+            <span className="text-[15px] font-bold text-[var(--fl-text)]">Unfed</span>
           </div>
 
           {/* Headline */}
@@ -411,7 +411,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               Live longer.
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-[var(--fl-text-secondary)]">
-              Intermittent fasting, beautifully tracked.
+              Stay Unfed. Stay sharp.
             </p>
           </div>
 

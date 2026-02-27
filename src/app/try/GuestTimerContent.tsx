@@ -69,7 +69,7 @@ export function GuestTimerContent() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <h2 className="text-xl font-bold text-[var(--fl-text)] text-center">
-        {isActive ? 'Fasting in Progress' : 'Try FastLane'}
+        {isActive ? 'Fasting in Progress' : 'Try Unfed'}
       </h2>
 
       {isActive ? (
