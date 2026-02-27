@@ -221,9 +221,11 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   }
 
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto max-w-lg lg:max-w-5xl">
       {isActive ? (
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
+          {/* Left column on desktop: timer + status + actions */}
+          <div className="flex flex-col items-center gap-4 lg:sticky lg:top-4">
           {/* Timer Ring with End Fast inside */}
           <TimerRing
             progress={timer.progress}
@@ -297,14 +299,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </p>
           </div>
 
-          {/* Body State Timeline */}
-          <div className="w-full">
-            <BodyStateTimeline
-              elapsedHours={elapsedHours}
-              fastingHours={timerStore.fastingHours ?? 16}
-            />
-          </div>
-
           {/* Sign-up nudge for guests */}
           {isGuest && (
             <p className="text-center text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
@@ -314,6 +308,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               to save your progress
             </p>
           )}
+          </div>{/* end left column */}
+
+          {/* Right column on desktop: Body State Timeline */}
+          <div className="w-full">
+            <BodyStateTimeline
+              elapsedHours={elapsedHours}
+              fastingHours={timerStore.fastingHours ?? 16}
+            />
+          </div>
 
           {/* End Fast confirmation dialog */}
           <Dialog
@@ -396,7 +399,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-8 pt-4">
+        <div className="flex flex-col items-center gap-8 pt-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-12">
+          {/* Left column: brand, headline, timer preview, protocol, start */}
+          <div className="flex flex-col items-center gap-8">
           {/* Brand mark */}
           <div className="flex items-center gap-2.5">
             <Image src="/icon.png" alt="Unfed" width={36} height={36} className="rounded-xl" priority />
@@ -458,35 +463,42 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           )}
 
           {/* Start CTA */}
-          <button
-            type="button"
-            onClick={handleStart}
-            className="h-14 w-full max-w-xs rounded-2xl bg-gradient-to-r from-blue-500 via-violet-500 to-amber-500 text-lg font-bold text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.97]"
-          >
-            Start Your Fast
-          </button>
+          <div className="relative">
+            <div className="start-btn-glow pointer-events-none absolute inset-0 rounded-full bg-[var(--fl-primary)] opacity-0 blur-xl" />
+            <button
+              type="button"
+              onClick={handleStart}
+              className="start-btn-3d start-btn-3d-idle relative h-16 w-64 rounded-full bg-[var(--fl-primary)] text-lg font-bold text-white"
+            >
+              Start Your Fast
+            </button>
+          </div>
 
           <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
             Free — no account required
           </p>
-        </div>
-      )}
+          </div>{/* end left column */}
 
-      {/* Divider */}
-      <div className="mt-8 flex w-full items-center gap-4 px-2">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
-        <span className="text-[11px] font-medium uppercase tracking-widest text-[var(--fl-text-tertiary)]">
-          Learn
-        </span>
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
-      </div>
+          {/* Right column: educational content */}
+          <div className="w-full flex flex-col gap-6">
+          {/* Desktop heading for right column */}
+          <h2 className="hidden lg:block text-lg font-bold text-[var(--fl-text)]">
+            Why Intermittent Fasting?
+          </h2>
 
-      {/* ── Educational content (always visible) ──────────── */}
-      <div className="mt-6 flex flex-col items-center gap-6">
-        {/* Benefit pills */}
-        <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
-          Tap to learn about the benefits
-        </p>
+          {/* Divider — mobile only */}
+          <div className="flex w-full items-center gap-4 px-2 lg:hidden">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
+            <span className="text-[11px] font-medium uppercase tracking-widest text-[var(--fl-text-tertiary)]">
+              Learn
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--fl-border)] to-transparent" />
+          </div>
+
+          {/* Benefit pills */}
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)] text-center lg:text-left">
+            Tap to learn about the benefits
+          </p>
           {(() => {
             const benefits = [
               {
@@ -691,7 +703,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
               </div>
             )}
           </div>
-      </div>
+          </div>{/* end right column */}
+        </div>
+      )}
 
       {/* Check-in dialog (logged-in users only) */}
       {!isGuest && (

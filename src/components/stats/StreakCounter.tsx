@@ -61,7 +61,7 @@ const STATS: StatItem[] = [
 export function StreakCounter({ streaks, className }: StreakCounterProps) {
   return (
     <Card padding="md" className={className}>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map((stat) => {
           const isCurrent = stat.label === 'Current Streak'
 

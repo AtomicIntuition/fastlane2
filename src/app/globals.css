@@ -157,3 +157,107 @@ body {
     animation: none;
   }
 }
+
+/* 3D Start button */
+.start-btn-3d {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(34, 197, 94, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.15s ease, transform 0.08s ease;
+}
+
+.start-btn-3d:hover {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.15),
+    0 0 30px rgba(34, 197, 94, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px) scale(1.01);
+}
+
+.start-btn-3d:active {
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(34, 197, 94, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+  transform: translateY(2px) scale(0.98);
+  transition: box-shadow 0.08s ease, transform 0.08s ease;
+}
+
+@keyframes start-btn-shadow-pulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.25),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.15),
+      0 0 20px rgba(34, 197, 94, 0.2),
+      0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.25),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(34, 197, 94, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.start-btn-3d-idle {
+  animation: start-btn-shadow-pulse 3s ease-in-out infinite, start-btn-breathe 3s ease-in-out infinite;
+}
+
+.start-btn-3d-idle:hover,
+.start-btn-3d-idle:active {
+  animation: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .start-btn-3d {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.12),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(34, 197, 94, 0.2),
+      0 4px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  .start-btn-3d:hover {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.15),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(34, 197, 94, 0.3),
+      0 6px 22px rgba(0, 0, 0, 0.5);
+  }
+
+  .start-btn-3d:active {
+    box-shadow:
+      inset 0 2px 5px rgba(0, 0, 0, 0.4),
+      inset 0 1px 2px rgba(0, 0, 0, 0.25),
+      0 0 8px rgba(34, 197, 94, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  @keyframes start-btn-shadow-pulse {
+    0%, 100% {
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(34, 197, 94, 0.15),
+        0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(34, 197, 94, 0.35),
+        0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start-btn-3d-idle {
+    animation: none;
+  }
+}
