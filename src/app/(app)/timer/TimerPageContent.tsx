@@ -521,13 +521,13 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
 
             return (
               <>
-                <div className="grid grid-cols-2 gap-2.5 w-full max-w-xs mx-auto">
+                <div className="grid grid-cols-2 gap-2.5 w-full max-w-sm mx-auto">
                   {benefits.map((b) => (
                     <button
                       key={b.id}
                       type="button"
                       onClick={() => setActiveBenefit(activeBenefit === b.id ? null : b.id)}
-                      className={`inline-flex h-9 items-center gap-2 rounded-full pr-3.5 text-[var(--fl-text-xs)] font-medium transition-colors ${activeBenefit === b.id ? 'bg-[var(--fl-primary)] text-white' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)] hover:bg-[var(--fl-bg-tertiary)]'}`}
+                      className={`inline-flex h-9 items-center gap-2 rounded-full pr-3.5 text-[var(--fl-text-xs)] font-medium whitespace-nowrap transition-colors ${activeBenefit === b.id ? 'bg-[var(--fl-primary)] text-white' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)] hover:bg-[var(--fl-bg-tertiary)]'}`}
                     >
                       <Image src={b.icon} alt={b.label} width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
                       {b.label}
