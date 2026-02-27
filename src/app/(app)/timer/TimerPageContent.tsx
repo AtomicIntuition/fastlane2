@@ -320,7 +320,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           </p>
 
           {/* Benefit pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {[
               { icon: '/icon-fat-burning.png', label: 'Fat Burning' },
               { icon: '/icon-mental-clarity.png', label: 'Mental Clarity' },
@@ -329,9 +329,9 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             ].map((b) => (
               <span
                 key={b.label}
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--fl-bg-secondary)] py-2 pl-2 pr-3.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
+                className="inline-flex h-9 items-center gap-2 rounded-full bg-[var(--fl-bg-secondary)] pr-3.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
               >
-                <Image src={b.icon} alt={b.label} width={28} height={28} className="rounded-full" />
+                <Image src={b.icon} alt={b.label} width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
                 {b.label}
               </span>
             ))}
