@@ -499,10 +499,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
 
           {/* Right column: educational content */}
           <div className="w-full flex flex-col gap-6">
-          {/* Desktop heading for right column */}
-          <h2 className="hidden lg:block text-lg font-bold text-[var(--fl-text)]">
-            Why Intermittent Fasting?
-          </h2>
 
           {/* Divider — mobile only */}
           <div className="flex w-full items-center gap-4 px-2 lg:hidden">
@@ -565,11 +561,13 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                   ))}
                 </div>
 
-                {activeBenefit && (() => {
-                  const benefit = benefits.find((b) => b.id === activeBenefit)
-                  if (!benefit) return null
-                  return (
-                    <div className="w-full rounded-xl bg-[var(--fl-bg-secondary)] p-4">
+                {/* Fixed-height container prevents layout shift when cycling */}
+                <div className="relative w-full min-h-[180px]">
+                  {benefits.map((benefit) => (
+                    <div
+                      key={benefit.id}
+                      className={`absolute inset-0 rounded-xl bg-[var(--fl-bg-secondary)] p-4 transition-opacity duration-300 ${activeBenefit === benefit.id ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    >
                       <div className="flex items-center gap-3 mb-3">
                         <Image src={benefit.icon} alt={benefit.label} width={40} height={40} className="rounded-full" />
                         <h3 className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-text)]">
@@ -580,8 +578,8 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                         {benefit.content}
                       </p>
                     </div>
-                  )
-                })()}
+                  ))}
+                </div>
               </>
             )
           })()}
