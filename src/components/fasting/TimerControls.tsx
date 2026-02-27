@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, Square, Clock, X } from 'lucide-react'
+import { Play, Square, Clock, X, Flame, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
@@ -83,6 +83,7 @@ export function TimerControls({
   }
 
   // Body-state info for the end dialog
+  const currentState = elapsedHours != null ? getCurrentBodyState(elapsedHours) : null
   const nextState = elapsedHours != null ? getNextBodyState(elapsedHours) : null
   const hoursUntilNext = nextState && elapsedHours != null
     ? nextState.startHour - elapsedHours
@@ -139,62 +140,135 @@ export function TimerControls({
         </Button>
       </div>
 
-      {/* Confirmation dialog */}
+      {/* ── End Fast Dialog ─────────────────────────────── */}
       <Dialog
-        open={confirmAction !== null}
+        open={confirmAction === 'complete'}
         onClose={handleDismiss}
-        title={
-          confirmAction === 'complete'
-            ? 'End your fast?'
-            : 'Cancel your fast?'
-        }
-        description={
-          confirmAction === 'cancel'
-            ? 'This will discard your current fasting session. This action cannot be undone.'
-            : undefined
-        }
-        footer={
-          confirmAction === 'complete' ? (
-            <>
-              <Button variant="primary" size="sm" onClick={handleDismiss}>
-                Keep Going
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleConfirm}>
-                End Fast
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" onClick={handleDismiss}>
-                Go Back
-              </Button>
-              <Button variant="danger" size="sm" onClick={handleConfirm}>
-                Cancel Fast
-              </Button>
-            </>
-          )
-        }
       >
-        {confirmAction === 'complete' && elapsedHours != null && (
-          <div className="flex flex-col gap-2 text-sm text-[var(--fl-text-secondary)]">
-            <p>
-              You&apos;ve been fasting for{' '}
-              <span className="font-semibold text-[var(--fl-text)]">
-                {formatElapsed(elapsedHours)}
-              </span>
-              .
-            </p>
-            {nextState && hoursUntilNext != null && hoursUntilNext > 0 && (
-              <p>
-                You&apos;re{' '}
-                <span className="font-semibold text-[var(--fl-primary)]">
-                  {formatHoursMinutes(hoursUntilNext)}
-                </span>{' '}
-                from {nextState.emoji} {nextState.name}!
+        <div className="flex flex-col items-center text-center gap-5">
+          {/* Icon */}
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100">
+            <Flame size={32} className="text-orange-500" />
+          </div>
+
+          {/* Title */}
+          <div>
+            <h2 className="text-xl font-bold text-[var(--fl-text)]">
+              End your fast?
+            </h2>
+            {elapsedHours != null && (
+              <p className="mt-2 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
+                You&apos;ve been fasting for{' '}
+                <span className="font-semibold text-[var(--fl-text)]">
+                  {formatElapsed(elapsedHours)}
+                </span>
               </p>
             )}
           </div>
-        )}
+
+          {/* Body state progress card */}
+          {currentState && (
+            <div className="w-full rounded-xl bg-[var(--fl-bg-secondary)] p-4">
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <span className="text-lg">{currentState.emoji}</span>
+                <span className="font-semibold text-[var(--fl-text)]">
+                  {currentState.name}
+                </span>
+              </div>
+              {nextState && hoursUntilNext != null && hoursUntilNext > 0 && (
+                <p className="mt-2 text-[var(--fl-text-xs)] text-[var(--fl-text-secondary)]">
+                  Only{' '}
+                  <span className="font-bold text-[var(--fl-primary)]">
+                    {formatHoursMinutes(hoursUntilNext)}
+                  </span>{' '}
+                  until {nextState.emoji} {nextState.name}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Buttons — Keep Going is primary, End Fast is secondary */}
+          <div className="flex w-full flex-col gap-2.5">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={handleDismiss}
+              leftIcon={<Flame size={18} />}
+            >
+              Keep Going
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              fullWidth
+              onClick={handleConfirm}
+              className="text-[var(--fl-text-tertiary)] hover:text-[var(--fl-text-secondary)]"
+            >
+              End Fast
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* ── Cancel Fast Dialog ──────────────────────────── */}
+      <Dialog
+        open={confirmAction === 'cancel'}
+        onClose={handleDismiss}
+      >
+        <div className="flex flex-col items-center text-center gap-5">
+          {/* Icon */}
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+            <AlertTriangle size={32} className="text-[var(--fl-danger)]" />
+          </div>
+
+          {/* Title */}
+          <div>
+            <h2 className="text-xl font-bold text-[var(--fl-text)]">
+              Cancel your fast?
+            </h2>
+            <p className="mt-2 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
+              This will discard your current session.
+              {elapsedHours != null && (
+                <>
+                  {' '}You&apos;ll lose{' '}
+                  <span className="font-semibold text-[var(--fl-text)]">
+                    {formatElapsed(elapsedHours)}
+                  </span>{' '}
+                  of progress.
+                </>
+              )}
+            </p>
+          </div>
+
+          {/* Warning card */}
+          <div className="w-full rounded-xl bg-red-50 p-4">
+            <p className="text-[var(--fl-text-xs)] font-medium text-[var(--fl-danger)]">
+              This action cannot be undone. Your fasting data for this session will not be saved.
+            </p>
+          </div>
+
+          {/* Buttons — Go Back is primary, Cancel is destructive */}
+          <div className="flex w-full flex-col gap-2.5">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={handleDismiss}
+            >
+              Go Back
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              fullWidth
+              onClick={handleConfirm}
+              className="text-[var(--fl-danger)] hover:text-[var(--fl-danger)] hover:bg-red-50"
+            >
+              Cancel Fast
+            </Button>
+          </div>
+        </div>
       </Dialog>
     </>
   )
