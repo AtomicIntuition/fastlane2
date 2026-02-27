@@ -260,7 +260,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
       ) : (
         <div className="flex flex-col items-center justify-center gap-6 pt-6">
           {/* Title */}
-          <h1 className={`text-2xl font-extrabold tracking-tight ${isGuest ? 'text-white drop-shadow-md' : 'text-[var(--fl-text)]'}`}>
+          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--fl-text)]">
             Intermittent Fasting
           </h1>
 
@@ -269,15 +269,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             <button
               type="button"
               onClick={() => setShowProtocols(true)}
-              className={`flex items-center gap-2 rounded-[var(--fl-radius-lg)] border px-4 py-2.5 transition-colors ${isGuest ? 'border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20' : 'border-[var(--fl-border)] bg-[var(--fl-bg)] hover:border-[var(--fl-border-hover)]'}`}
+              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2.5 transition-colors hover:border-[var(--fl-border-hover)]"
             >
-              <span className={`text-[var(--fl-text-sm)] font-bold ${isGuest ? 'text-white' : 'text-[var(--fl-primary)]'}`}>
+              <span className="text-[var(--fl-text-sm)] font-bold text-[var(--fl-primary)]">
                 {selectedProtocolInfo.name}
               </span>
-              <span className={`text-[var(--fl-text-xs)] ${isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'}`}>
+              <span className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
                 {selectedProtocolInfo.fastingHours}h fast / {selectedProtocolInfo.eatingHours}h eat
               </span>
-              <ChevronDown size={14} className={isGuest ? 'text-white/70' : 'text-[var(--fl-text-tertiary)]'} />
+              <ChevronDown size={14} className="text-[var(--fl-text-tertiary)]" />
             </button>
           )}
 
@@ -295,7 +295,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           {/* START FAST button — app icon as the button */}
           <div className="relative flex items-center justify-center">
             {/* Soft glow halo */}
-            <span className="start-btn-glow absolute -inset-6 rounded-full bg-white/25 blur-2xl" />
+            <span className="start-btn-glow absolute -inset-6 rounded-full bg-violet-400/20 blur-2xl" />
             <button
               type="button"
               onClick={handleStart}
@@ -306,7 +306,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 alt="Start Fast"
                 width={200}
                 height={200}
-                className="absolute inset-0 h-full w-full rounded-full object-cover drop-shadow-[0_8px_30px_rgba(0,0,0,0.3)]"
+                className="absolute inset-0 h-full w-full rounded-full object-cover drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
                 priority
               />
               <span className="relative text-xl font-bold uppercase tracking-widest text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
@@ -315,7 +315,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </button>
           </div>
 
-          <p className={`text-[var(--fl-text-xs)] ${isGuest ? 'text-white/60' : 'text-[var(--fl-text-tertiary)]'}`}>
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
             Tap to start a {selectedProtocolInfo?.fastingHours ?? 16}h fast
           </p>
 
@@ -329,7 +329,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             ].map((b) => (
               <span
                 key={b.label}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[var(--fl-text-xs)] font-medium ${isGuest ? 'bg-white/10 text-white/90 backdrop-blur-sm' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)]'}`}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--fl-bg-secondary)] px-3 py-1.5 text-[var(--fl-text-xs)] font-medium text-[var(--fl-text-secondary)]"
               >
                 <span>{b.emoji}</span>
                 {b.label}
@@ -342,7 +342,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             <button
               type="button"
               onClick={() => setShowHowItWorks(!showHowItWorks)}
-              className={`flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium transition-colors ${isGuest ? 'text-white/80 hover:text-white' : 'text-[var(--fl-primary)] hover:text-[var(--fl-primary-hover)]'}`}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
             >
               How It Works
               <ChevronDown
@@ -352,7 +352,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </button>
 
             {showHowItWorks && (
-              <div className={`mt-1 w-full rounded-2xl p-5 ${isGuest ? 'bg-white/10 backdrop-blur-md' : 'bg-[var(--fl-bg-secondary)]'}`}>
+              <div className="mt-1 w-full rounded-2xl bg-[var(--fl-bg-secondary)] p-5">
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { icon: UtensilsCrossed, text: 'Finish your last meal', color: 'text-orange-500' },
@@ -362,12 +362,12 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                   ].map((item) => (
                     <div
                       key={item.text}
-                      className={`flex flex-col items-center gap-2 rounded-xl p-3 text-center ${isGuest ? 'bg-white/10' : 'bg-[var(--fl-bg)]'}`}
+                      className="flex flex-col items-center gap-2 rounded-xl bg-[var(--fl-bg)] p-3 text-center"
                     >
-                      <div className={`flex h-9 w-9 items-center justify-center rounded-full ${isGuest ? 'bg-white/15' : 'bg-[var(--fl-bg-secondary)]'}`}>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--fl-bg-secondary)]">
                         <item.icon size={18} className={item.color} />
                       </div>
-                      <p className={`text-[11px] font-medium leading-snug ${isGuest ? 'text-white/80' : 'text-[var(--fl-text-secondary)]'}`}>
+                      <p className="text-[11px] font-medium leading-snug text-[var(--fl-text-secondary)]">
                         {item.text}
                       </p>
                     </div>
@@ -382,7 +382,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             <button
               type="button"
               onClick={() => setShowTips(!showTips)}
-              className={`flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium transition-colors ${isGuest ? 'text-white/80 hover:text-white' : 'text-[var(--fl-primary)] hover:text-[var(--fl-primary-hover)]'}`}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
             >
               <Lightbulb size={14} />
               Tips for Success
@@ -393,7 +393,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </button>
 
             {showTips && (
-              <div className={`mt-1 rounded-xl p-4 ${isGuest ? 'bg-white/10 backdrop-blur-md' : 'bg-[var(--fl-bg-secondary)]'}`}>
+              <div className="mt-1 rounded-xl bg-[var(--fl-bg-secondary)] p-4">
                 <div className="space-y-3">
                   {[
                     {
@@ -422,12 +422,12 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                     },
                   ].map((tip) => (
                     <div key={tip.title} className="flex gap-3">
-                      <span className={`mt-0.5 ${isGuest ? 'text-white/60' : 'text-[var(--fl-primary)]'}`}>•</span>
+                      <span className="mt-0.5 text-[var(--fl-primary)]">•</span>
                       <div>
-                        <p className={`text-[var(--fl-text-sm)] font-semibold ${isGuest ? 'text-white' : 'text-[var(--fl-text)]'}`}>
+                        <p className="text-[var(--fl-text-sm)] font-semibold text-[var(--fl-text)]">
                           {tip.title}
                         </p>
-                        <p className={`mt-0.5 text-[var(--fl-text-xs)] leading-relaxed ${isGuest ? 'text-white/70' : 'text-[var(--fl-text-secondary)]'}`}>
+                        <p className="mt-0.5 text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
                           {tip.detail}
                         </p>
                       </div>
@@ -443,7 +443,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             <button
               type="button"
               onClick={() => setShowLearnMore(!showLearnMore)}
-              className={`flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium transition-colors ${isGuest ? 'text-white/80 hover:text-white' : 'text-[var(--fl-primary)] hover:text-[var(--fl-primary-hover)]'}`}
+              className="flex w-full items-center justify-center gap-1.5 py-2 text-[var(--fl-text-xs)] font-medium text-[var(--fl-primary)] transition-colors hover:text-[var(--fl-primary-hover)]"
             >
               What is intermittent fasting?
               <ChevronDown
@@ -453,7 +453,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             </button>
 
             {showLearnMore && (
-              <div className={`mt-1 rounded-xl p-4 text-[var(--fl-text-sm)] leading-relaxed ${isGuest ? 'bg-white/10 backdrop-blur-md text-white/80' : 'bg-[var(--fl-bg-secondary)] text-[var(--fl-text-secondary)]'}`}>
+              <div className="mt-1 rounded-xl bg-[var(--fl-bg-secondary)] p-4 text-[var(--fl-text-sm)] leading-relaxed text-[var(--fl-text-secondary)]">
                 <p>
                   Intermittent fasting (IF) is an eating pattern that cycles between periods of
                   fasting and eating. Rather than restricting <em>what</em> you eat, it focuses
@@ -465,7 +465,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                   (autophagy). Most people start with a 16:8 schedule — 16 hours fasting, 8
                   hours eating.
                 </p>
-                <p className={`mt-3 text-[var(--fl-text-xs)] ${isGuest ? 'text-white/50' : 'text-[var(--fl-text-tertiary)]'}`}>
+                <p className="mt-3 text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)]">
                   Consult your doctor before starting any fasting regimen, especially if you have
                   a medical condition or are pregnant.
                 </p>
