@@ -115,6 +115,25 @@ export async function addWater(userId: string, sessionId: string) {
   return updated!
 }
 
+export async function removeWater(userId: string, sessionId: string) {
+  const [session] = await db
+    .select()
+    .from(fastingSessions)
+    .where(and(eq(fastingSessions.id, sessionId), eq(fastingSessions.userId, userId)))
+
+  if (!session) throw new Error('Session not found')
+  if (session.status !== 'active') throw new Error('Session is not active')
+
+  const newCount = Math.max(0, (session.waterGlasses ?? 0) - 1)
+
+  await db.update(fastingSessions)
+    .set({ waterGlasses: newCount })
+    .where(eq(fastingSessions.id, sessionId))
+
+  const [updated] = await db.select().from(fastingSessions).where(eq(fastingSessions.id, sessionId))
+  return updated!
+}
+
 export async function extendFast(userId: string, sessionId: string, additionalHours: number) {
   const [session] = await db
     .select()

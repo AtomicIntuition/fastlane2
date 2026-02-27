@@ -113,26 +113,26 @@ export function TimerControls({
 
   return (
     <>
-      <div className={cn('flex w-full flex-col items-center gap-2', className)}>
-        {/* End Fast — full-width primary */}
+      <div className={cn('flex items-center justify-center gap-3', className)}>
+        {/* End Fast */}
         <Button
           variant="primary"
-          size="lg"
-          fullWidth
+          size="md"
           onClick={() => setConfirmAction('complete')}
-          leftIcon={<Square size={18} />}
+          leftIcon={<Square size={16} />}
         >
           End Fast
         </Button>
 
-        {/* Cancel — subtle text link */}
-        <button
-          type="button"
+        {/* Cancel */}
+        <Button
+          variant="ghost"
+          size="md"
           onClick={() => setConfirmAction('cancel')}
-          className="text-xs text-[var(--fl-text-tertiary)] transition-colors hover:text-[var(--fl-danger)]"
+          className="text-[var(--fl-text-tertiary)] hover:text-[var(--fl-danger)] hover:bg-red-50"
         >
-          Cancel fast
-        </button>
+          Cancel
+        </Button>
       </div>
 
       {/* ── End Fast Dialog ─────────────────────────────── */}

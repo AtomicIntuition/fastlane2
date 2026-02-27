@@ -36,24 +36,33 @@ export function BodyStateCard({ elapsedHours, fastingHours, className }: BodySta
   return (
     <div
       className={cn(
-        'flex items-center gap-3 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-3',
+        'rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] p-4',
         className,
       )}
     >
-      <span className="text-2xl" role="img" aria-label={current.name}>
-        {current.emoji}
-      </span>
-
-      <div className="min-w-0 flex-1">
-        <p className="text-[var(--fl-text-sm)] font-semibold text-[var(--fl-text)]">
+      {/* Current state — centered hero */}
+      <div className="flex flex-col items-center gap-1.5">
+        <span className="text-4xl" role="img" aria-label={current.name}>
+          {current.emoji}
+        </span>
+        <p className="text-base font-bold text-[var(--fl-text)]">
           {current.name}
         </p>
-        {next && timeUntilNext !== null && (
-          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-secondary)]">
-            Next: {next.emoji} {next.name} in {formatTimeUntil(timeUntilNext)}
-          </p>
-        )}
+        <p className="text-center text-[var(--fl-text-xs)] leading-relaxed text-[var(--fl-text-secondary)]">
+          {current.description}
+        </p>
       </div>
+
+      {/* Next state transition */}
+      {next && timeUntilNext !== null && (
+        <div className="mt-3 flex items-center justify-center gap-2 rounded-[var(--fl-radius-md)] bg-[var(--fl-bg-secondary)] px-3 py-2">
+          <span className="text-sm">{next.emoji}</span>
+          <p className="text-[var(--fl-text-xs)] text-[var(--fl-text-secondary)]">
+            <span className="font-bold text-[var(--fl-primary)]">{next.name}</span>
+            {' '}in {formatTimeUntil(timeUntilNext)}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

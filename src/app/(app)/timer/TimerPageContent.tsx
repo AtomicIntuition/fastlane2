@@ -12,6 +12,7 @@ import {
   useCancelFast,
   useExtendFast,
   useAddWater,
+  useRemoveWater,
   useSubmitCheckin,
   type FastingSessionData,
 } from '@/hooks/use-fasting-session'
@@ -46,6 +47,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const cancelFast = useCancelFast()
   const extendFast = useExtendFast()
   const addWater = useAddWater()
+  const removeWater = useRemoveWater()
   const submitCheckin = useSubmitCheckin()
 
   const [selectedProtocol, setSelectedProtocol] = useState<string | null>('16-8')
@@ -56,7 +58,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const [showHowItWorks, setShowHowItWorks] = useState(false)
   const [showTips, setShowTips] = useState(false)
   const [activeBenefit, setActiveBenefit] = useState<string | null>(null)
-  const [timelineToggled, setShowTimeline] = useState<boolean | null>(null)
+  const [showTimeline, setShowTimeline] = useState(true)
 
   // Hydrate timer store from server data (logged-in users only)
   if (initialActiveSession && !timerStore.isActive && initialActiveSession.status === 'active') {
@@ -164,6 +166,15 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
     if (timer.sessionId) addWater.mutate(timer.sessionId)
   }, [isGuest, timerStore, timer.sessionId, addWater])
 
+  const handleRemoveWater = useCallback(() => {
+    if (timerStore.waterGlasses <= 0) return
+    if (isGuest) {
+      timerStore.removeWater()
+      return
+    }
+    if (timer.sessionId) removeWater.mutate(timer.sessionId)
+  }, [isGuest, timerStore, timer.sessionId, removeWater])
+
   const handleProtocolSelect = useCallback((protocol: FastingProtocol) => {
     setSelectedProtocol(protocol.id)
     setShowProtocols(false)
@@ -188,8 +199,6 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
   const protocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
   const selectedProtocolInfo = selectedProtocol ? getProtocol(selectedProtocol) : null
   const elapsedHours = timer.elapsed / 3_600_000
-  // Auto-expand timeline when 4+ hours in; user toggle overrides
-  const showTimeline = timelineToggled ?? elapsedHours >= 4
 
   return (
     <div className="mx-auto max-w-lg">
@@ -225,16 +234,16 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
           />
 
           {/* Zone 4: Quick Actions Row */}
-          <div className="flex flex-col items-center gap-1.5">
-            <div className="flex items-center gap-2.5">
-              {/* Water pill */}
+          <div className="flex flex-col items-center gap-2">
+            {/* Water row */}
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleAddWater}
                 className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-all hover:bg-blue-50 active:scale-[0.96]"
               >
                 <Droplet size={18} />
-                <span>Water</span>
+                <span>+Water</span>
                 {timerStore.waterGlasses > 0 && (
                   <span className="ml-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
                     {timerStore.waterGlasses}
@@ -242,7 +251,20 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 )}
               </button>
 
-              {/* +1h pill */}
+              {/* -1 water (only when water > 0) */}
+              {timerStore.waterGlasses > 0 && (
+                <button
+                  type="button"
+                  onClick={handleRemoveWater}
+                  className="flex items-center gap-1 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                >
+                  <span>−1</span>
+                </button>
+              )}
+            </div>
+
+            {/* Time extension row */}
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleExtend}
@@ -252,7 +274,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 <span>+1h</span>
               </button>
 
-              {/* -1h pill (only when extended) */}
+              {/* -1h (only when extended) */}
               {timerStore.extendedHours > 0 && (
                 <button
                   type="button"
@@ -263,6 +285,7 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
                 </button>
               )}
             </div>
+
             <p className="text-[10px] text-[var(--fl-text-tertiary)]">
               Water, black coffee &amp; tea won&apos;t break your fast
             </p>

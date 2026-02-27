@@ -67,6 +67,11 @@ export function HomeContent() {
     timerStore.addWater()
   }, [timerStore])
 
+  const handleRemoveWater = useCallback(() => {
+    if (timerStore.waterGlasses <= 0) return
+    timerStore.removeWater()
+  }, [timerStore])
+
   const protocolInfo = selectedProtocol ? getProtocol(selectedProtocol) : null
   const activeProtocolInfo = timer.protocol ? getProtocol(timer.protocol) : null
   const elapsedHours = timer.elapsed / 3_600_000
@@ -92,22 +97,34 @@ export function HomeContent() {
               isActive
             />
 
-            <BodyStateCard elapsedHours={elapsedHours} className="w-full" />
+            <BodyStateCard elapsedHours={elapsedHours} fastingHours={timerStore.fastingHours ?? 16} className="w-full" />
 
             {/* Water */}
-            <button
-              type="button"
-              onClick={handleAddWater}
-              className="flex items-center gap-2 rounded-[var(--fl-radius-lg)] border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-colors hover:bg-blue-50 active:scale-95"
-            >
-              <Droplet size={18} />
-              <span>Water</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleAddWater}
+                className="flex items-center gap-2 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-4 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-info)] transition-all hover:bg-blue-50 active:scale-[0.96]"
+              >
+                <Droplet size={18} />
+                <span>+Water</span>
+                {timerStore.waterGlasses > 0 && (
+                  <span className="ml-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
+                    {timerStore.waterGlasses}
+                  </span>
+                )}
+              </button>
+
               {timerStore.waterGlasses > 0 && (
-                <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--fl-info)] px-1.5 text-[var(--fl-text-xs)] font-bold text-white">
-                  {timerStore.waterGlasses}
-                </span>
+                <button
+                  type="button"
+                  onClick={handleRemoveWater}
+                  className="flex items-center gap-1 rounded-full border border-[var(--fl-border)] bg-[var(--fl-bg)] px-3 py-2 text-[var(--fl-text-sm)] font-medium text-[var(--fl-text-tertiary)] transition-all hover:border-[var(--fl-border-hover)] active:scale-[0.96]"
+                >
+                  <span>−1</span>
+                </button>
               )}
-            </button>
+            </div>
 
             <p className="text-sm text-[var(--fl-text-secondary)] text-center">
               {timer.isComplete

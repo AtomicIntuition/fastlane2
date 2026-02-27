@@ -32,6 +32,7 @@ export interface TimerState {
   addExtendedHour: () => void
   removeExtendedHour: () => void
   addWater: () => void
+  removeWater: () => void
   clear: () => void
 }
 
@@ -85,6 +86,11 @@ export const useTimerStore = create<TimerState>()(
       addWater: () =>
         set((state) => ({
           waterGlasses: state.waterGlasses + 1,
+        })),
+
+      removeWater: () =>
+        set((state) => ({
+          waterGlasses: Math.max(0, state.waterGlasses - 1),
         })),
 
       clear: () =>

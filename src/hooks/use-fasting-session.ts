@@ -298,3 +298,26 @@ export function useAddWater() {
     },
   })
 }
+
+/* ------------------------------------------------------------------ */
+/*  useRemoveWater                                                     */
+/* ------------------------------------------------------------------ */
+
+export function useRemoveWater() {
+  const queryClient = useQueryClient()
+  const removeWaterLocal = useTimerStore((s) => s.removeWater)
+
+  return useMutation({
+    mutationFn: (sessionId: string) =>
+      postFasting<FastingSessionData>('/api/fasting/water-remove', { sessionId }),
+    onSuccess: () => {
+      removeWaterLocal()
+      queryClient.invalidateQueries({ queryKey: fastingKeys.active() })
+    },
+    onError: (error: Error) => {
+      toast.error('Could not remove water', {
+        description: error.message,
+      })
+    },
+  })
+}
