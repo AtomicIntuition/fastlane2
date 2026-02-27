@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame, AlertTriangle } from 'lucide-react'
+import { Droplet, ChevronDown, UtensilsCrossed, Moon, GlassWater, Sun, Lightbulb, Clock, Flame } from 'lucide-react'
 import { useTimer } from '@/hooks/use-timer'
 import { useTimerStore } from '@/stores/timer-store'
 import {
@@ -18,11 +18,9 @@ import {
 } from '@/hooks/use-fasting-session'
 import { useApp } from '@/components/layout/AppShell'
 import { TimerRing } from '@/components/fasting/TimerRing'
-import { TimerControls } from '@/components/fasting/TimerControls'
 import { ProtocolPicker } from '@/components/fasting/ProtocolPicker'
 import { BodyStateTimeline } from '@/components/fasting/BodyStateTimeline'
 import { CheckinForm, type CheckinInput } from '@/components/checkin/CheckinForm'
-import { Button } from '@/components/ui/Button'
 import { Dialog } from '@/components/ui/Dialog'
 import { getCurrentBodyState, getNextBodyState } from '@/lib/fasting/body-states'
 import { getProtocol, type FastingProtocol } from '@/lib/fasting/protocols'
@@ -322,74 +320,76 @@ export function TimerPageContent({ initialActiveSession }: TimerPageContentProps
             open={showEndConfirm}
             onClose={() => setShowEndConfirm(false)}
           >
-            <div className="flex flex-col items-center text-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100">
-                <Flame size={32} className="text-orange-500" />
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-[var(--fl-text)]">
-                  End your fast?
-                </h2>
-                <p className="mt-2 text-[var(--fl-text-sm)] text-[var(--fl-text-secondary)]">
-                  You&apos;ve been fasting for{' '}
-                  <span className="font-semibold text-[var(--fl-text)]">
-                    {formatElapsed(elapsedHours)}
-                  </span>
+            <div className="flex flex-col items-center gap-6 py-2">
+              {/* Elapsed time — hero number */}
+              <div className="text-center">
+                <p className="text-4xl font-bold tracking-tight text-[var(--fl-text)]">
+                  {formatElapsed(elapsedHours)}
+                </p>
+                <p className="mt-1.5 text-[15px] font-medium text-[var(--fl-text-secondary)]">
+                  fasting duration
                 </p>
               </div>
 
+              {/* Current body state — prominent card */}
               {currentBodyState && (
-                <div className="w-full rounded-xl bg-[var(--fl-bg-secondary)] p-4">
-                  <div className="flex items-center justify-center gap-2 text-sm">
-                    <span className="text-lg">{currentBodyState.emoji}</span>
-                    <span className="font-semibold text-[var(--fl-text)]">
-                      {currentBodyState.name}
+                <div className="w-full rounded-2xl bg-gradient-to-br from-[var(--fl-bg-secondary)] to-[var(--fl-bg)] border border-[var(--fl-border)] px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl" role="img" aria-label={currentBodyState.name}>
+                      {currentBodyState.emoji}
                     </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-semibold text-[var(--fl-text)]">
+                        {currentBodyState.name}
+                      </p>
+                      {nextBodyState && hoursUntilNext != null && hoursUntilNext > 0 && (
+                        <p className="mt-0.5 text-[13px] text-[var(--fl-text-secondary)]">
+                          {nextBodyState.emoji}{' '}
+                          <span className="font-semibold text-[var(--fl-primary)]">
+                            {formatHoursMinutes(hoursUntilNext)}
+                          </span>{' '}
+                          until {nextBodyState.name}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  {nextBodyState && hoursUntilNext != null && hoursUntilNext > 0 && (
-                    <p className="mt-2 text-[var(--fl-text-xs)] text-[var(--fl-text-secondary)]">
-                      Only{' '}
-                      <span className="font-bold text-[var(--fl-primary)]">
-                        {formatHoursMinutes(hoursUntilNext)}
-                      </span>{' '}
-                      until {nextBodyState.emoji} {nextBodyState.name}
-                    </p>
-                  )}
                 </div>
               )}
 
-              <div className="flex w-full flex-col gap-2.5">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
+              {/* Title */}
+              <p className="text-[15px] font-medium text-[var(--fl-text-secondary)] text-center">
+                Are you sure you want to end your fast?
+              </p>
+
+              {/* Actions */}
+              <div className="flex w-full flex-col gap-3">
+                <button
+                  type="button"
                   onClick={() => setShowEndConfirm(false)}
-                  leftIcon={<Flame size={18} />}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--fl-primary)] text-[15px] font-semibold text-white transition-all active:scale-[0.98]"
                 >
-                  Keep Going
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  fullWidth
+                  <Flame size={18} />
+                  Keep Fasting
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     setShowEndConfirm(false)
                     handleComplete()
                   }}
-                  className="text-[var(--fl-text-tertiary)] hover:text-[var(--fl-text-secondary)]"
+                  className="flex h-12 w-full items-center justify-center rounded-xl border border-[var(--fl-border)] bg-[var(--fl-bg)] text-[15px] font-semibold text-[var(--fl-text)] transition-all hover:bg-[var(--fl-bg-secondary)] active:scale-[0.98]"
                 >
                   End Fast
-                </Button>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
                     setShowEndConfirm(false)
                     handleCancel()
                   }}
-                  className="text-[var(--fl-text-xs)] text-[var(--fl-text-tertiary)] transition-colors hover:text-[var(--fl-danger)]"
+                  className="flex h-10 w-full items-center justify-center text-[13px] font-medium text-[var(--fl-text-tertiary)] transition-colors hover:text-[var(--fl-danger)]"
                 >
-                  Cancel fast (discard)
+                  Discard fast
                 </button>
               </div>
             </div>
